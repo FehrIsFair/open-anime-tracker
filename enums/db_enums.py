@@ -2,13 +2,14 @@ import enum
 
 
 class AnimeType(enum.Enum):
-  SHOW = 1
-  MOVIE = 2
+  SHOW = 'show'
+  MOVIE = 'movie'
 
 
 class ReviewStatus(enum.Enum):
-  PENDING = 1
-  CONFIRMED = 2
+  PENDING = 'pending'
+  CONFIRMED = 'confirmed'
+  QUARANTINE = 'quarantine'
 
 
 class SeasonType(enum.Enum):
