@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "open-anime-tracker"
+version = "0.1.0"
+description = ""
+authors = ["Spencer Jensen <roxasbeta@gmail.com>"]
+readme = "README.md"
+packages = [{include = "open_anime_tracker", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+flask = "^3.0.1"
+flask-sqlalchemy = "^3.1.1"
+alembic = "^1.13.1"
+sqlalchemy = "^2.0.25"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
