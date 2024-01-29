@@ -1,4 +1,9 @@
-from sqlalchemy.ext.delcarative import declarative_base
+from sqlalchemy.orm import DeclarativeBase
+import sqlalchemy.ext.declarative as dec
 
 
-Base= declarative_base()
+class Base(DeclarativeBase):
+  pass
+
+
+SqlAlchemyBase = dec.declarative_base()
