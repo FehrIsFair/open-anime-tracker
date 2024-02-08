@@ -8,10 +8,11 @@ packages = [{include = "open_anime_tracker", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-flask = "^3.0.1"
-flask-sqlalchemy = "^3.1.1"
+flask = "^3.0.2"
 alembic = "^1.13.1"
 sqlalchemy = "^2.0.25"
+flask-sqlalchemy = "^3.1.1"
+psycopg2 = "^2.9.9"
 
 
 [build-system]

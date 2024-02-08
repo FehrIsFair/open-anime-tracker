@@ -1,5 +1,7 @@
 How to setup the environment:
 
-python3 -m venv ~/path/to/project/open-anime-tracker/.venv
+The easiest to use Pycharm to get it going.
 
-. ~/path/to/project/open-anime-tracker/.venv/bin/activate
+Make sure the drop the PATH variable in your .zshrc file located in the ```home``` directeory.
+
+https://www.jetbrains.com/help/pycharm/poetry.html
