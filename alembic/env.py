@@ -9,6 +9,9 @@ from alembic import context
 from db_models.base import Base
 from db_models.anime import Anime
 from db_models.seasons import Seasons
+from db_models.ratings import Rating
+from db_models.users import User
+from db_models.list import List
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

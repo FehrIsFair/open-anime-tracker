@@ -2,7 +2,7 @@
 name = "open-anime-tracker"
 version = "0.1.0"
 description = ""
-authors = ["Spencer Jensen <roxasbeta@gmail.com>"]
+authors = ["FehrIsFair <fehrisfair@proton.me>"]
 readme = "README.md"
 packages = [{include = "open_anime_tracker", from = "src"}]
 
