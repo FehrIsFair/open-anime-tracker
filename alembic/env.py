@@ -12,6 +12,7 @@ from db_models.seasons import Seasons
 from db_models.ratings import Rating
 from db_models.users import User
 from db_models.list import List
+from db_models.invites import Invites
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

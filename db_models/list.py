@@ -8,6 +8,7 @@ class List(Base):
   anime_id = Column(Integer, ForeignKey('anime.id'), nullable=False)
   user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
 
+
   def __init__(self, anime_id: int, user_id: int):
     super().__init__()
     self.anime_id = anime_id
