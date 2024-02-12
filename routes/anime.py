@@ -1,22 +1,24 @@
 from flask import MethodView, request
 from sqlalchemy import db
 from db_models.anime import Anime
+from flask_classful import FlaskView
 
 
-class AnimeView(MethodView):
+class AnimeView(FlaskView):
+  route_base = 'anime'
 
   def index(self):
     return 404
 
   def get(self, _id: int):
-    anime = db.session.execute(db.select(Anime).filter_by(id==_id)).scalar_one()
+    anime = db.session.query(Anime).filter(Anime.id == _id).first()
     if not anime:
       return 404, "Anime not found"
     return {'anime': anime}
 
   def put(self):
     request_json = request.get_json()['anime']
-    anime = db.session.execute(db.select(Anime).filter_by(id==request_json['id'])).scalar_one()
+    anime = db.session.query(Anime).filter(Anime.id == request_json['id']).first()
     for key in request_json.keys():
       anime.__dict__[key] = request_json[key]
     try:
@@ -27,7 +29,7 @@ class AnimeView(MethodView):
 
   def post(self):
     request_json = request.get_json()['anime']
-    anime = db.session.execute(db.select(Anime).filter_by(id==request_json['id'])).scalar_one()
+    anime = db.session.query().filter(Anime.title == request_json['anime']).first()
     if anime:
       return 409, "Anime already exists"
     kwargs = {}
@@ -44,7 +46,7 @@ class AnimeView(MethodView):
 
   def delete(self):
     request_json = request.get_json()['anime']
-    anime = db.session.execute(db.select(Anime).filter_by(id==request_json['id'])).scalar_one()
+    anime = db.session.query(Anime).filter(Anime.id == request_json['id']).first()
     if not anime:
       return 404, "Anime not found"
     db.session.delete(anime)
