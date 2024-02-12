@@ -2,7 +2,7 @@
 name = "open-anime-tracker"
 version = "0.1.0"
 description = ""
-authors = ["Spencer Jensen <roxasbeta@gmail.com>"]
+authors = ["FehrIsFair <fehrisfair@proton.me>"]
 readme = "README.md"
 packages = [{include = "open_anime_tracker", from = "src"}]
 
@@ -13,6 +13,9 @@ alembic = "^1.13.1"
 sqlalchemy = "^2.0.25"
 flask-sqlalchemy = "^3.1.1"
 psycopg2 = "^2.9.9"
+uuid = "^1.30"
+flask-classful = "^0.16.0"
+flask-bcrypt = "^1.0.1"
 
 
 [build-system]
