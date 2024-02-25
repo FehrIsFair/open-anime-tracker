@@ -10,7 +10,7 @@ You will have to install packages depending on your distro as this uses sqlalche
 
 How to set up the environment:
 
-The easiest way is to use Pycharm to get it going.z
+The easiest way is to use Pycharm to get it going.
 
 Make sure the drop the PATH variable in your .zshrc/.bashrc file located in the ```home``` directeory.
 
