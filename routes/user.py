@@ -1,4 +1,4 @@
-import os
+import const
 from operator import and_
 
 from flask import MethodView, request
@@ -27,7 +27,7 @@ class UserView(FlaskView):
     if not user:
       return 404, 'User not found'
     if bcrypt.check_password_hash(user.password, request_json['old_pw']):
-      user.password = bcrypt.generate_password_hash(request_json['password'], os.environ.get('SALT')).decode('utf-8')
+      user.password = bcrypt.generate_password_hash(request_json['password'], const.SALT).decode('utf-8')
       db.session.commit()
       return 200, "Password successfully updated."
     else:

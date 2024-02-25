@@ -16,6 +16,7 @@ psycopg2 = "^2.9.9"
 uuid = "^1.30"
 flask-classful = "^0.16.0"
 flask-bcrypt = "^1.0.1"
+python-dotenv = "^1.0.1"
 
 
 [build-system]
