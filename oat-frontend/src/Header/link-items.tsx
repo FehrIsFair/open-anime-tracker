@@ -1,6 +1,5 @@
-import React, { useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom'
-import { Box, AppBar, Toolbar, Typography, Button } from '@mui/material'
+import { Typography, Button } from '@mui/material'
 
 import { p } from '../TextFormating/text_config'
 

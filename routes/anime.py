@@ -1,11 +1,12 @@
 from flask import MethodView, request
+from flask_cors import cross_origin
 from sqlalchemy import db
 from db_models.anime import Anime
 from flask_classful import FlaskView
 
 
 class AnimeView(FlaskView):
-  route_base = 'anime'
+  route_base = '/anime'
 
   def index(self):
     return 404
@@ -17,7 +18,7 @@ class AnimeView(FlaskView):
     return {'anime': anime}
 
   def put(self):
-    request_json = request.get_json()['anime']
+    request_json = request.get_json()['data']
     anime = db.session.query(Anime).filter(Anime.id == request_json['id']).first()
     for key in request_json.keys():
       anime.__dict__[key] = request_json[key]
@@ -28,7 +29,7 @@ class AnimeView(FlaskView):
     return 200, {'anime': anime, "message": "Anime updated"}
 
   def post(self):
-    request_json = request.get_json()['anime']
+    request_json = request.get_json()['data']
     anime = db.session.query().filter(Anime.title == request_json['anime']).first()
     if anime:
       return 409, "Anime already exists"
@@ -45,7 +46,7 @@ class AnimeView(FlaskView):
     return 200, {'anime': anime, 'message': "Anime Successfully Created"}
 
   def delete(self):
-    request_json = request.get_json()['anime']
+    request_json = request.get_json()['data']
     anime = db.session.query(Anime).filter(Anime.id == request_json['id']).first()
     if not anime:
       return 404, "Anime not found"
