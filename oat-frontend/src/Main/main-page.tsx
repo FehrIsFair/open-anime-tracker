@@ -12,7 +12,7 @@ import { animePost } from '../BackendRequests/anime';
 
 
 const MainPage = (): JSX.Element => {
-  const [animeType, setAnimeType] = React.useState('SHOW');
+  const [animeType, setAnimeType] = React.useState('show');
   const [animeTitle, setAnimeTitle] = React.useState('');
 
   const dummy_json: any = {};
@@ -23,11 +23,11 @@ const MainPage = (): JSX.Element => {
       jp_title: '',
       other_titles: _(dummy_json).toJSON(),
       rating: 0,
-      type: animeType,
+      _type: animeType,
       seasons: 0,
       episodes: 0,
       desc: 'This is a test.',
-      status: ''
+      status: 'PENDING'
     }
     animePost(request_json)
   }

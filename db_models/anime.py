@@ -11,16 +11,16 @@ class Anime(Base):
   jp_title = Column(String, nullable=True)
   other_titles = Column(JSON, nullable=True)
   rating = Column(Float, nullable=True)
-  type = Column(Enum('show', 'movie', name='AnimeType'), nullable=False)
+  _type = Column(Enum(AnimeType), nullable=False)
   seasons = Column(Integer, default=1)
   episodes = Column(Integer, default=12)
   desc = Column(String(255), nullable=True)
-  status = Column(Enum('pending', 'confirmed', 'quarantine', name="ReviewStatus"), nullable=False)
+  status = Column(Enum(ReviewStatus), nullable=False)
 
   def __init__(self, title:str, _type: AnimeType, status: ReviewStatus = ReviewStatus.PENDING, **kwargs):
     super().__init__()
     self.title = title
-    self.type = _type
-    self.status = status
+    self._type = _type
+    self.status = status.value
     for key, value in kwargs.items():
       self.__dict__[key] = value

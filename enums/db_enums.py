@@ -2,14 +2,14 @@ import enum
 
 
 class AnimeType(enum.Enum):
-  SHOW = 'show'
-  MOVIE = 'movie'
+  show = 'show'
+  movie = 'movie'
 
 
 class ReviewStatus(enum.Enum):
   PENDING = 'pending'
   CONFIRMED = 'confirmed'
-  QUARANTINE = 'quarantine'
+  QUARANTINE = 'quarantined'
 
 
 class SeasonType(enum.Enum):
@@ -17,5 +17,4 @@ class SeasonType(enum.Enum):
   ONA = 2
   OVA = 3
 
-def convert_string_to_anime_enum(x: str) -> AnimeType:
-
+# def convert_string_to_anime_enum(x: str) -> AnimeType:

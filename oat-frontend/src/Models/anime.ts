@@ -5,7 +5,7 @@ export interface Anime {
   jp_title: string;
   other_titles: any;
   rating: number;
-  type: string;
+  _type: string;
   seasons: number;
   episodes: number;
   desc: string;

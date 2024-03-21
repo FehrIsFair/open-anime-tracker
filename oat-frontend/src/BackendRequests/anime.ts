@@ -5,7 +5,7 @@ export const animePost = (anime: Anime) => {
   const payload: JSON = to_json(anime)
   axios({
     method: 'POST',
-    url: 'http://localhost:5000/anime/',
+    url: 'http://localhost:5000/anime/create',
     data: payload,
   }).then((res) => {
     return res
