@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "open_anime_tracker", from = "src"}]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11"
 flask = "^3.0.2"
 alembic = "^1.13.1"
 sqlalchemy = "^2.0.25"
@@ -17,6 +17,8 @@ uuid = "^1.30"
 flask-classful = "^0.16.0"
 flask-bcrypt = "^1.0.1"
 python-dotenv = "^1.0.1"
+flask-cors = "^4.0.0"
+flask-restful = "^0.3.10"
 
 
 [build-system]

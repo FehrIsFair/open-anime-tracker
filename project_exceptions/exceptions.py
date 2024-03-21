@@ -1,0 +1,2 @@
+class InvalidEnumException(Exception):
+  pass
