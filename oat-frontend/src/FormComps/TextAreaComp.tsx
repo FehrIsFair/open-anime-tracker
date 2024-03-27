@@ -1,13 +1,13 @@
-import { TextField } from '@mui/material'
+import { TextareaAutosize } from '@mui/material'
 
 interface InputProps {
   id: string
-  label: string
   value: string
   set_field: any
+  placeholder: string
 }
 
-const InputComponent = (props: InputProps): JSX.Element => {
+const TextAreaComponent = (props: InputProps): JSX.Element => {
 
   const onChange = (event: any) => {
     props.set_field(event.target.value as string)
@@ -15,14 +15,12 @@ const InputComponent = (props: InputProps): JSX.Element => {
 
   return (
     <>
-      <TextField id={props.id} 
-        label={props.label}
-        variant='outlined' 
+      <TextareaAutosize id={props.id} 
+        placeholder={props.placeholder}
         value={props.value}
         onChange={onChange} 
-        type='text'
       />
     </>
   )
 }
-export default InputComponent
+export default TextAreaComponent

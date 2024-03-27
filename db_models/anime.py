@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String, Float, Enum, JSON
+from datetime import datetime
+
+from sqlalchemy import Column, Integer, String, Float, Enum, JSON, DateTime, Boolean
 from db_models.base import Base
 from enums.db_enums import AnimeType, ReviewStatus
 
@@ -16,6 +18,11 @@ class Anime(Base):
   episodes = Column(Integer, default=12)
   desc = Column(String(255), nullable=True)
   status = Column(Enum(ReviewStatus), nullable=False)
+  created_at = Column(DateTime, default=datetime.utcnow())
+  updated_at = Column(DateTime, default=datetime.utcnow())
+  rank = Column(Integer, nullable=True)
+  content_rating = Column(String(), default='PG')
+  nsfw = Column(Boolean, default=False)
 
   def __init__(self, title:str, _type: AnimeType, status: ReviewStatus = ReviewStatus.PENDING, **kwargs):
     super().__init__()

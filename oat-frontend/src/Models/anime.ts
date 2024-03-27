@@ -3,13 +3,13 @@ import _ from 'lodash'
 export interface Anime {
   title: string;
   jp_title: string;
-  other_titles: any;
-  rating: number;
   _type: string;
   seasons: number;
   episodes: number;
   desc: string;
   status: string;
+  nsfw: boolean;
+  content_rating: string
 }
 
 export const to_json = (object: Anime): any => {

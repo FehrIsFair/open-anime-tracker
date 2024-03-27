@@ -9,12 +9,12 @@ class AnimeType(enum.Enum):
 class ReviewStatus(enum.Enum):
   PENDING = 'pending'
   CONFIRMED = 'confirmed'
-  QUARANTINE = 'quarantined'
+  QUARANTINE = 'quarantine'
 
 
 class SeasonType(enum.Enum):
-  SEASON = 1
-  ONA = 2
-  OVA = 3
+  SEASON = 'season'
+  ONA = 'ona'
+  OVA = 'ova'
 
 # def convert_string_to_anime_enum(x: str) -> AnimeType:

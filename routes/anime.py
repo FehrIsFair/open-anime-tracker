@@ -22,11 +22,11 @@ def get_anime_type(input: str):
 
 def get_review_type(input: str):
   match input:
-    case ReviewStatus.PENDING.name:
+    case ReviewStatus.PENDING.value:
       return ReviewStatus.PENDING
-    case ReviewStatus.CONFIRMED.name:
+    case ReviewStatus.CONFIRMED.value:
       return ReviewStatus.CONFIRMED
-    case ReviewStatus.QUARANTINE.name:
+    case ReviewStatus.QUARANTINE.value:
       return ReviewStatus.QUARANTINE
     case _:
       raise InvalidEnumException(f'Value: {input} is not a valid Review Status')
@@ -48,15 +48,17 @@ def create_anime():
     return Response(response='Anime already exists', status=409, content_type="application/json")
 
   kwargs = {}
+
   for key, value in request_json.items():
     if key not in ['title', '_type', 'status']:
       kwargs[key] = value
   try:
     _type = get_anime_type(request_json['_type'])
+
     status = get_review_type(request_json['status'])
   except InvalidEnumException:
     return Response(response=f'Failed to properly set enum type', status=500, content_type='application/json')
-  anime = Anime(request_json['title'], _type, **kwargs)
+  anime = Anime(request_json['title'], _type, status, **kwargs)
   try:
     db.session.add(anime)
     db.session.commit()
