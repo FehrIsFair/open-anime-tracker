@@ -13,6 +13,7 @@ const NavHeader = (): JSX.Element => {
         <Toolbar disableGutters>
           {/* Logo goes here */}
           <NavItem path='/' text='Home' />
+          <NavItem path='/add-anime' text='Add Anime' />
         </Toolbar>
       </Container>
     </AppBar>

@@ -6,7 +6,7 @@ import { getVariableName } from '../extentsions/helper_funcs';
 interface SelectProps {
   id: string
   label_id: string
-  anime_type: any
+  value: any
   setValue: any
   menu_options: Array<any>
 }
@@ -19,11 +19,10 @@ const SelectComponent = (props: SelectProps): JSX.Element => {
 
   return (
     <>
-      <InputLabel id={props.label_id}>Anime Type</InputLabel>
       <Select
        id={props.id}
-       labelId={props.label_id}
-       value={props.anime_type}
+       label={props.label_id}
+       value={props.value}
        onChange={onChange}
          >
           {props.menu_options.map((option) => {

@@ -3,14 +3,14 @@ import { TextField } from '@mui/material'
 interface InputProps {
   id: string
   label: string
-  value: string
+  value: number
   set_field: any
 }
 
-const InputComponent = (props: InputProps): JSX.Element => {
+const NumberInputComponent = (props: InputProps): JSX.Element => {
 
   const onChange = (event: any) => {
-    props.set_field(event.target.value as string)
+    props.set_field(event.target.value as number)
   }
 
   return (
@@ -20,9 +20,8 @@ const InputComponent = (props: InputProps): JSX.Element => {
         variant='outlined' 
         value={props.value}
         onChange={onChange} 
-        type='text'
       />
     </>
   )
 }
-export default InputComponent
+export default NumberInputComponent

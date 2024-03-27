@@ -1,5 +1,8 @@
-from sqlalchemy import Column, Integer, String, Float, Enum, JSON, ForeignKey
+from datetime import datetime
+
+from sqlalchemy import Column, Integer, String, Float, Enum, JSON, ForeignKey, DateTime
 from db_models.base import Base
+from enums.db_enums import SeasonType
 
 
 class Seasons(Base):
@@ -11,6 +14,11 @@ class Seasons(Base):
   episodes = Column(Integer, nullable=False)
   desc = Column(String(255), nullable=True)
   rating = Column(Float, nullable=True)
+  created_at = Column(DateTime, default=datetime.utcnow())
+  updated_at = Column(DateTime, default=datetime.utcnow())
+  air_date = Column(String(), nullable=True)
+  end_date = Column(String(), nullable=True)
+  season_type = Column(Enum(SeasonType), nullable=False)
 
   def __init__(self, season_number: int, anime_id: int, episodes: int, **kwargs):
     super().__init__()
