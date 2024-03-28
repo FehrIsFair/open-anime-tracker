@@ -34,7 +34,7 @@ with open('./data/test_data.json') as json_file:
     'other_titles': get_title_dict(data['attributes']['titles']),
     'seasons': 7,
     'desc': data['attributes']['description'],
-    'content_rating': data
+    'content_rating': data['attributes']['ageRating']
   }
 
   anime = Anime(data['attributes']['titles']['en'], AnimeType.show.value, ReviewStatus.CONFIRMED, **kwargs)
