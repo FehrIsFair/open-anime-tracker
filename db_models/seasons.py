@@ -12,13 +12,13 @@ class Seasons(Base):
   season_number = Column(Integer, nullable=False)
   anime_id = Column(Integer, ForeignKey('anime.id'), nullable=False)
   episodes = Column(Integer, nullable=False)
-  desc = Column(String(255), nullable=True)
+  desc = Column(String(), nullable=True)
   rating = Column(Float, nullable=True)
   created_at = Column(DateTime, default=datetime.utcnow())
   updated_at = Column(DateTime, default=datetime.utcnow())
   air_date = Column(String(), nullable=True)
   end_date = Column(String(), nullable=True)
-  season_type = Column(Enum(SeasonType), nullable=False)
+  type_season = Column(Enum(SeasonType), nullable=False)
 
   def __init__(self, season_number: int, anime_id: int, episodes: int, **kwargs):
     super().__init__()
