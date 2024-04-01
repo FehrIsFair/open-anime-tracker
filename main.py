@@ -7,8 +7,7 @@ import const
 from flask_restful import Api
 
 from routes.anime import anime_routes
-
-db = SQLAlchemy()
+from routes.user import user_routes
 
 data_store_db_obj  = SQLAlchemy()
 
@@ -33,9 +32,4 @@ def default():
   return "Hello World"
 
 app.register_blueprint(anime_routes)
-
-db.init_app(app)
-
-engine = create_engine(f'postgresql://{const.PG_USER}:{const.PG_PW}@localhost:{const.PG_PORT}/db')
-
-session = Session(engine)
+app.register_blueprint(user_routes)

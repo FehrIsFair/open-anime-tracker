@@ -1,60 +1,123 @@
-import const
-from operator import and_
+import datetime
+import os
 
-from flask import MethodView, request
-from sqlalchemy import db
+from flask import request, Blueprint, make_response
+from flask_cors import cross_origin
+from sqlalchemy import and_
+
+from database import session
 from db_models.users import User
-from flask_classful import FlaskView
 from helper_funcs import bcrypt
 
+user_routes = Blueprint('user', __name__)
 
-class UserView(FlaskView):
-  route_base = 'users'
 
-  def index(self):
-    users = db.session.query(User).all()
-    return 200, {'users': users}
+@user_routes.route('/user', methods=['GET'])
+@cross_origin(origin="localhost", headers=['Content-Type', 'Authorization'])
+def index():
+  return_list = []
+  try:
+    req_user = session.query(User).all()
+  except Exception as e:
+    print(e)
+    return make_response({'Message': 'Could not find users'}, 500)
 
-  def get(self, user_id):
-    user = db.session.query(User).filter(User.id == user_id).first()
-    if not user:
-      return 404, "User not found."
-    return 200, {'user': user}
+  return_list = [u.make_json() for u in req_user]
 
-  def put(self):
-    request_json = request.get_json()
-    user = db.session.query(User).filter(User.id == request_json['user_id']).first()
-    if not user:
-      return 404, 'User not found'
-    if bcrypt.check_password_hash(user.password, request_json['old_pw']):
-      user.password = bcrypt.generate_password_hash(request_json['password'], const.SALT).decode('utf-8')
-      db.session.commit()
-      return 200, "Password successfully updated."
-    else:
-      return 401, "Old Password did not match. Cannot update password."
+  return make_response({'data': return_list}, 200)
 
-  def post(self):
-    request_json = request.get_json()
-    user = db.session.query(User).filter(User.id == request_json['email']).first()
-    if not user:
-      return 409, "User already exists"
-    hash = bcrypt.generate_password_hash(request_json['password'], os.environ.get('SALT')).decode('utf-8')
-    new_user = User(request_json['email'], hash)
-    try:
-      db.session.add(new_user)
-      db.session.commit()
-    except Exception as e:
-      return 500, "Could not Create User"
-    return 200, "User Create Successfully"
 
-  def delete(self):
-    request_json = request.get_json()
-    user = db.session.query(User).filter(User.id == request_json['user_id']).first()
-    if not user:
-      return 404, "User not found."
-    db.session.delete(user)
-    try:
-      db.session.commit()
-    except Exception as e:
-      return 500, "Could not delete user."
-    return 200, "User deleted"
+@user_routes.route('/user/create', methods=['POST'])
+@cross_origin(origin="localhost", headers=['Content-Type', 'Authorization'])
+def create_user():
+  json = request.get_json()
+  user = session.query(User).filter(and_(User.email == json['email'], User.username == json['username'])).first()
+
+  if user:
+    return make_response({'Message': 'User already exists with email, username combo'}, 409)
+
+  hash = bcrypt.generate_password_hash(json['password'], os.environ.get('SALT')).decode('utf-8')
+
+  new_user = User(json['email'], hash, json['username'])
+
+  try:
+    session.add(new_user)
+    session.commit()
+  except Exception as e:
+    print(e)
+    return make_response({'Message': 'Could not create new user'}, 500)
+
+  return make_response({'Message': 'User create successfully'}, 200)
+
+
+@user_routes.route('/user/update_pw', methods=['PATCH'])
+@cross_origin(origin="localhost", headers=['Content-Type', 'Authorization'])
+def edit_user():
+  json = request.get_json()
+  user = session.query(User).filter(and_(User.id == json['id'])).first()
+
+  if not user:
+    return make_response({'Message': 'User not found'}, 500)
+
+  old_hash = bcrypt.generate_password_hash(json['old_password'], os.environ.get('SALT')).decode('utf-8')
+  if user.password != old_hash:
+    return make_response({'Message': 'Old password did not match.'}, 500)
+
+  new_hash = bcrypt.generate_password_hash(json['new_password'], os.environ.get('SALT')).decode('utf-8')
+
+  user.password = new_hash
+
+  try:
+    session.commit()
+  except Exception as e:
+    print(e)
+    return make_response({'Message': 'Could not update password'}, 500)
+  return make_response({'Message': 'Password updated'}, 200)
+
+
+@user_routes.route('/user/edit', methods=['PATCH'])
+@cross_origin(origin="localhost", headers=['Content-Type', 'Authorization'])
+def pw_update():
+  json = request.get_json()
+  user = session.query(User).filter(and_(User.id == json['id'])).first()
+
+  if not user:
+    return make_response({'Message': 'User not found'}, 404)
+
+  old_hash = bcrypt.generate_password_hash(json['password'], os.environ.get('SALT')).decode('utf-8')
+  if user.password != old_hash:
+    return make_response({'Message': 'Password did not match, will not update user'}, 500)
+
+  kwargs = {}
+  for key, value in json.items():
+    if key != 'password':
+      kwargs[key] = value
+
+  user.set_values(**kwargs)
+
+  try:
+    session.commit()
+  except Exception as e:
+    print(e)
+    return make_response({'Message': 'User could not be updated'}, 500)
+  return make_response(({'Message': 'User updated.'}, 200))
+
+
+@user_routes.route('/user/delete', methods=['DELETE'])
+@cross_origin(origin="localhost", headers=['Content-Type', 'Authorization'])
+def delete_user():
+  json = request.get_json()
+  user = session.query(User).filter(and_(User.id == json['id'])).first()
+
+  if not user:
+    return make_response({'Message': 'User not found'}, 404)
+
+  user.deleted_at(datetime.datetime.utcnow())
+
+  try:
+    session.commit()
+  except Exception as e:
+    print(e)
+    return make_response({'Message': 'Could not delete user'}, 500)
+
+  return make_response({'Message': 'User Successfully deleted'}, 200)

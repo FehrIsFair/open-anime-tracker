@@ -1,7 +1,5 @@
-import { InputLabel, Select, SelectChangeEvent, MenuItem } from '@mui/material'
+import { Select, SelectChangeEvent, MenuItem } from '@mui/material'
 import React from 'react';
-
-import { getVariableName } from '../extentsions/helper_funcs';
 
 interface SelectProps {
   id: string

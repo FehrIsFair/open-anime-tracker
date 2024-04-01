@@ -1,10 +1,12 @@
 import _ from 'lodash'
+import { MaybeNumber } from '../extentsions/helper_funcs';
 
 export interface Anime {
   title: string;
   jp_title: string;
   _type: string;
   seasons: number;
+  rating: number | any;
   episodes: number;
   desc: string;
   status: string;

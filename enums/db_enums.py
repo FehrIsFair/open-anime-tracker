@@ -7,9 +7,9 @@ class AnimeType(enum.Enum):
 
 
 class ReviewStatus(enum.Enum):
-  PENDING = 'pending'
-  CONFIRMED = 'confirmed'
-  QUARANTINE = 'quarantine'
+  pending = 'pending'
+  confirmed = 'confirmed'
+  quarantine = 'quarantine'
 
 
 class SeasonType(enum.Enum):

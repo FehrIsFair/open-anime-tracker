@@ -1,6 +1,8 @@
+import pdb
 from datetime import datetime
 
 from sqlalchemy import Column, Integer, String, Float, Enum, JSON, DateTime, Boolean
+
 from db_models.base import Base
 from enums.db_enums import AnimeType, ReviewStatus
 
@@ -24,10 +26,27 @@ class Anime(Base):
   content_rating = Column(String(), default='PG')
   nsfw = Column(Boolean, default=False)
 
-  def __init__(self, title:str, _type: AnimeType, status: ReviewStatus = ReviewStatus.PENDING, **kwargs):
+  def __init__(self, title:str, _type: AnimeType, status: ReviewStatus = ReviewStatus.pending, **kwargs):
     super().__init__()
     self.title = title
     self._type = _type
     self.status = status.value
+    self.set_values(**kwargs)
+
+  def set_values(self, **kwargs):
     for key, value in kwargs.items():
       self.__dict__[key] = value
+
+  def make_json(self):
+    return_dict = {}
+    for key, value in self.__dict__.items():
+      match key:
+        case '_sa_instance_state':
+          continue
+        case '_type':
+          return_dict[key] = value.value
+        case 'status':
+          return_dict[key] = value.value
+        case _:
+          return_dict[key] = value
+    return return_dict

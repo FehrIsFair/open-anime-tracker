@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, AppBar, Toolbar, Typography, Button, FormControl } from '@mui/material'
+import { Box, Typography, FormControl } from '@mui/material'
 
 import {h1} from '../TextFormating/text_config'
 import InputComponent from '../FormComps/InputComp';
@@ -7,7 +7,6 @@ import { AnimeTypeEnum, StatusEnum, ContentRating } from '../Enums/AnimeType';
 import SelectComponent from '../FormComps/SelectComp';
 import SubmitBtn from '../FormComps/Buttons/SubmitBtn';
 import Anime from '../Models/anime';
-import _ from 'lodash';
 import { animePost } from '../BackendRequests/anime';
 import NumberInputComponent from '../FormComps/NumberInput';
 import TextAreaComponent from '../FormComps/TextAreaComp';
@@ -27,6 +26,7 @@ const AddAnime = () => {
 
   const submitForm = () => {
     const request_json: Anime = {
+      rating: null,
       title: animeTitle,
       jp_title: jpTitle,
       _type: animeType,
@@ -41,7 +41,7 @@ const AddAnime = () => {
   }
 
   return (
-    <>
+    <Box>
       <Typography 
       variant='h1' 
       sx={h1}>
@@ -106,7 +106,7 @@ const AddAnime = () => {
         />
         <SubmitBtn variant={2} submit_func={submitForm}></SubmitBtn>
       </FormControl>
-    </>
+    </Box>
   )
 }
 export default AddAnime

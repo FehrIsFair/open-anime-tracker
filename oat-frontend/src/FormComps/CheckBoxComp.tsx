@@ -1,9 +1,6 @@
 import { Checkbox } from '@mui/material'
 import React from 'react';
 
-import { getVariableName } from '../extentsions/helper_funcs';
-
-
 interface CheckBoxProps {
   value: boolean
   set_value: any
