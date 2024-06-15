@@ -11,7 +11,7 @@ class Seasons(Base):
   id = Column(Integer, primary_key=True)
   season_number = Column(Integer, nullable=False)
   anime_id = Column(Integer, ForeignKey('anime.id'), nullable=False)
-  episodes = Column(Integer, nullable=False)
+  episodes = Column(Integer, nullable=True)
   desc = Column(String(), nullable=True)
   rating = Column(Float, nullable=True)
   created_at = Column(DateTime, default=datetime.utcnow())

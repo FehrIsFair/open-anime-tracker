@@ -13,6 +13,7 @@ const NavHeader = (): JSX.Element => {
           <NavItem path='/' text='Home' />
           <NavItem path='/add-anime' text='Add Anime' />
           <NavItem path='/get-anime' text='Get Anime' />
+          <NavItem path='/signup' text='Sign Up' />
         </Toolbar>
       </Container>
     </AppBar>

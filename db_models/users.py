@@ -2,6 +2,7 @@ from datetime import datetime
 
 from sqlalchemy import Column, Integer, String, Float, Enum, JSON, ForeignKey, DateTime
 from db_models.base import Base
+from uuid import uuid4
 
 
 class User(Base):
@@ -10,6 +11,7 @@ class User(Base):
   email = Column(String, nullable=False)
   password = Column(String, nullable=False)
   username = Column(String, nullable=False)
+  uuid = Column(String)
   created_at = Column(DateTime, default=datetime.utcnow())
   updated_at = Column(DateTime, default=datetime.utcnow())
   deleted_at = Column(DateTime, nullable=True)
@@ -19,6 +21,7 @@ class User(Base):
     self.email = email
     self.password = password
     self.username = username
+    self.uuid = uuid4()
     self.set_values(**kwargs)
 
   def set_values(self, **kwargs):

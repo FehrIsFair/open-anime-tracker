@@ -7,7 +7,7 @@ interface InputProps {
   set_field: any;
 }
 
-const InputComponent = (props: InputProps): JSX.Element => {
+const EmailComponent = (props: InputProps): JSX.Element => {
   const onChange = (event: any) => {
     props.set_field(event.target.value as string);
   };
@@ -21,10 +21,10 @@ const InputComponent = (props: InputProps): JSX.Element => {
           variant="outlined"
           value={props.value}
           onChange={onChange}
-          type="text"
+          type="email"
         />
       </FormControl>
     </>
   );
 };
-export default InputComponent;
+export default EmailComponent;

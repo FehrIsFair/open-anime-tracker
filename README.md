@@ -20,12 +20,14 @@ You will have to install 3.11 via a ppa.
 
 The easiest way is to use Pycharm to get it going.
 
-Make sure the drop the PATH variable in your .zshrc/.bashrc file located in the ```home``` directeory.
+Make sure the drop the PATH variable in your .zshrc/.bashrc file located in the ```home``` directory.
 
 https://www.jetbrains.com/help/pycharm/poetry.html
 
 ### Running the Environment:
 ```flask --app main run``` To run the backend, use ```--debug``` to have the server reload dynamically as you make changes.
+
+```python -c 'import secrets; print(secrets.token_hex())'``` This is to generate a secret key.
 
 ```npm start``` Is to start the frontend in dev mode.
 
