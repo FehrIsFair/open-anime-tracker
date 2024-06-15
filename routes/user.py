@@ -1,13 +1,16 @@
 import datetime
 import os
+import pdb
+from passlib.hash import bcrypt as bc
 
 from flask import request, Blueprint, make_response
 from flask_cors import cross_origin
 from sqlalchemy import and_
+# bcrypt in the functions is imported locally to avoid circular imports.
+
 
 from database import session
 from db_models.users import User
-from helper_funcs import bcrypt
 
 user_routes = Blueprint('user', __name__)
 
@@ -35,8 +38,9 @@ def create_user():
 
   if user:
     return make_response({'Message': 'User already exists with email, username combo'}, 409)
-
-  hash = bcrypt.generate_password_hash(json['password'], os.environ.get('SALT')).decode('utf-8')
+  from helper_funcs import bcrypt
+  pdb.set_trace()
+  hash = bc.using(int(os.environ.get('SALT'))).hash(json['password'])
 
   new_user = User(json['email'], hash, json['username'])
 
@@ -58,7 +62,7 @@ def edit_user():
 
   if not user:
     return make_response({'Message': 'User not found'}, 500)
-
+  from helper_funcs import bcrypt
   old_hash = bcrypt.generate_password_hash(json['old_password'], os.environ.get('SALT')).decode('utf-8')
   if user.password != old_hash:
     return make_response({'Message': 'Old password did not match.'}, 500)
@@ -84,6 +88,7 @@ def pw_update():
   if not user:
     return make_response({'Message': 'User not found'}, 404)
 
+  from helper_funcs import bcrypt
   old_hash = bcrypt.generate_password_hash(json['password'], os.environ.get('SALT')).decode('utf-8')
   if user.password != old_hash:
     return make_response({'Message': 'Password did not match, will not update user'}, 500)
