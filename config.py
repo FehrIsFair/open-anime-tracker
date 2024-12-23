@@ -7,7 +7,7 @@ import const
 
 class ServerConfig:
   SECRET_KEY = os.environ.get('SECRET_KEY')
-  SQLALCHEMY_DATABASE_URI = (f'postgresql://{const.PG_USER}:{const.PG_PW}@localhost:{const.PG_PORT}/db')
+  SQLALCHEMY_DATABASE_URI = (f'postgresql://{const.PG_USER}:{const.PG_PW}@127.0.0.1:{const.PG_PORT}/db')
   SQLALCHEMY_TRACK_MODIFICATIONS = True
   CORS_HEADERS = 'Content-Type'
   # enable session config

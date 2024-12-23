@@ -13,12 +13,27 @@ Node version: ```20.11.1```
 You will have to install packages depending on your distro as this uses sqlalchemy with postgresql.
 ```psycopg2```
 
+If you are having trouble with that, install instead install ```psycopg2-binary```
+
 ## For Ubuntu (and derivatives) 22.04 users:
-You will have to install 3.11 via a ppa.
+You will have to install 3.11 via a DeadSnakes ppa.
+
+If you don't want to do that, you can instead use pyenv.
+
+## For Arch Linux Users:
+You will have to install the postgres sys-package. This project uses docker for the database, so you will have to run
+the following command:
+```sudo systemctl stop postgres.service```
+
+This is because it takes the default port and changing the ports in the docker-compose file does not fix the issue.
 
 ### How to set up the environment:
 
-The easiest way is to use Pycharm to get it going.
+The easiest way is to use Pycharm to get it going. 
+#### LINUX USERS: 
+DO NOT USE THE FLATPAK. Unless you are OK wasting time debugging the terminal 
+settings to use the correct terminal environment. Either the snap or the system package will do.
+Its a shame that the flatpak doesn't work out of the box, honestly.
 
 Make sure the drop the PATH variable in your .zshrc/.bashrc file located in the ```home``` directory.
 

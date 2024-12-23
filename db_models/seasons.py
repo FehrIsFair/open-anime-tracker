@@ -19,6 +19,8 @@ class Seasons(Base):
   air_date = Column(String(), nullable=True)
   end_date = Column(String(), nullable=True)
   type_season = Column(Enum(SeasonType), nullable=False)
+  part = Column(Integer, nullable=True)
+  title = Column(String(), nullable=True)
 
   def __init__(self, season_number: int, anime_id: int, episodes: int, **kwargs):
     super().__init__()

@@ -16,5 +16,6 @@ class SeasonType(enum.Enum):
   SEASON = 'season'
   ONA = 'ona'
   OVA = 'ova'
+  SPECIAL = 'special'
 
 # def convert_string_to_anime_enum(x: str) -> AnimeType:
