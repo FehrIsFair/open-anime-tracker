@@ -17,6 +17,5 @@ export const animePost = async (anime: Anime) => {
 
 export const animeGet = async () => {
   const {data} = await engine.get('/anime')
-  debugger
   return data
 }

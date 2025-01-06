@@ -22,30 +22,28 @@ const PasswordComponent = (props: InputProps): JSX.Element => {
 
   return (
     <>
-      <FormControl>
-        <TextField
-          id={props.id}
-          label={props.label}
-          variant="outlined"
-          value={props.value}
-          onChange={onChange}
-          type={showpass ? "text" : "password"}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  aira-labbel="toggle password visibility"
-                  onClick={handleShowPassword}
-                  edge="end"
-                >
-                  {showpass ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            )
-          }}
-          fullWidth
-        />
-      </FormControl>
+      <TextField
+        id={props.id}
+        label={props.label}
+        variant="outlined"
+        value={props.value}
+        onChange={onChange}
+        type={showpass ? "text" : "password"}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aira-labbel="toggle password visibility"
+                onClick={handleShowPassword}
+                edge="end"
+              >
+                {showpass ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          )
+        }}
+        fullWidth
+      />
     </>
   );
 };

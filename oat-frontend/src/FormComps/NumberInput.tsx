@@ -15,11 +15,11 @@ const NumberInputComponent = (props: InputProps): JSX.Element => {
 
   return (
     <>
-      <TextField id={props.id} 
+      <TextField id={props.id}
         label={props.label}
-        variant='outlined' 
+        variant='outlined'
         value={props.value}
-        onChange={onChange} 
+        onChange={onChange}
       />
     </>
   )

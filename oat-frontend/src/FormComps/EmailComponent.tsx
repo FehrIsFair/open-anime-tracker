@@ -14,16 +14,14 @@ const EmailComponent = (props: InputProps): JSX.Element => {
 
   return (
     <>
-      <FormControl>
-        <TextField
-          id={props.id}
-          label={props.label}
-          variant="outlined"
-          value={props.value}
-          onChange={onChange}
-          type="email"
-        />
-      </FormControl>
+      <TextField
+        id={props.id}
+        label={props.label}
+        variant="outlined"
+        value={props.value}
+        onChange={onChange}
+        type="email"
+      />
     </>
   );
 };

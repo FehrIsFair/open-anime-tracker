@@ -9,7 +9,7 @@ interface CheckBoxProps {
 
 
 const CheckBoxComponent = (props: CheckBoxProps) => {
-  
+
   const onChange = (event: any) => {
     if (props.value) {
       props.set_value(false)

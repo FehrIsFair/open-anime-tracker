@@ -15,10 +15,10 @@ const TextAreaComponent = (props: InputProps): JSX.Element => {
 
   return (
     <>
-      <TextareaAutosize id={props.id} 
+      <TextareaAutosize id={props.id}
         placeholder={props.placeholder}
         value={props.value}
-        onChange={onChange} 
+        onChange={onChange}
       />
     </>
   )
