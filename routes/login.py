@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import request, Blueprint, make_response
 from flask import session as sesh
 from flask_cors import cross_origin
@@ -21,7 +23,9 @@ def login():
     return make_response({'Message': 'You are already logged in.'}, 200)
   if bcrypt.check_password_hash(json['password'], user.password):
     return make_response({'Message': 'Invalid Username or Password'}, 401)
-  return make_response({'id': user.id, 'email': user.email}, 200)
+  res = make_response({'id': user.id, 'email': user.email}, 200)
+  res.set_cookie('oat', value = '')
+  return res
 
 
 @login_routes.route('/logout', methods=['POST'])

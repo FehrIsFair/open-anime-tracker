@@ -1,32 +1,37 @@
-[tool.poetry]
+[tool.pdm.build]
+includes = [
+    "src/open_anime_tracker",
+]
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[project]
+authors = [
+    {name = "FehrIsFair", email = "fehrisfair@proton.me"},
+]
+requires-python = "<4.0,>=3.11"
+dependencies = [
+    "flask<4.0.0,>=3.0.2",
+    "alembic<2.0.0,>=1.13.1",
+    "sqlalchemy<3.0.0,>=2.0.25",
+    "flask-sqlalchemy<4.0.0,>=3.1.1",
+    "uuid<2.0,>=1.30",
+    "flask-classful<1.0.0,>=0.16.0",
+    "flask-bcrypt<2.0.0,>=1.0.1",
+    "python-dotenv<2.0.0,>=1.0.1",
+    "flask-cors<5.0.0,>=4.0.0",
+    "flask-restful<1.0.0,>=0.3.10",
+    "requests<3.0.0,>=2.31.0",
+    "flask-login<1.0.0,>=0.6.3",
+    "flask-security<4.0.0,>=3.0.0",
+    "flask-session<1.0.0,>=0.8.0",
+    "redis<6.0.0,>=5.0.4",
+    "psycopg2-binary<3.0.0,>=2.9.9",
+    "numpy>=2.2.2",
+]
 name = "open-anime-tracker"
 version = "0.1.0"
 description = ""
-authors = ["FehrIsFair <fehrisfair@proton.me>"]
 readme = "README.md"
-packages = [{include = "open_anime_tracker", from = "src"}]
-
-[tool.poetry.dependencies]
-python = "^3.11"
-flask = "^3.0.2"
-alembic = "^1.13.1"
-sqlalchemy = "^2.0.25"
-flask-sqlalchemy = "^3.1.1"
-uuid = "^1.30"
-flask-classful = "^0.16.0"
-flask-bcrypt = "^1.0.1"
-python-dotenv = "^1.0.1"
-flask-cors = "^4.0.0"
-flask-restful = "^0.3.10"
-requests = "^2.31.0"
-flask-login = "^0.6.3"
-flask-security = "^3.0.0"
-flask-session = "^0.8.0"
-redis = "^5.0.4"
-psycopg2-binary = "^2.9.9"
-psycopg2 = "^2.9.9"
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"

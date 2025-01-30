@@ -1,15 +1,20 @@
 import _ from 'lodash'
 
 
-export interface User {
+interface User {
   username: string
   email: string
   password: string
 }
 
 
-export const to_json = (object: User): any => {
+export const to_json = (object: any): any => {
   return _(object).toJSON()
+}
+
+export interface Login {
+  email: string
+  password: string
 }
 
 export default User

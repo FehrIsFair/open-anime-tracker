@@ -38,11 +38,9 @@ def create_user():
 
   if user:
     return make_response({'Message': 'User already exists with email, username combo'}, 409)
-  from helper_funcs import bcrypt
-  pdb.set_trace()
-  hash = bc.using(int(os.environ.get('SALT'))).hash(json['password'])
+  hash_ = bc.using(int(os.environ.get('SALT'))).hash(json['password'])
 
-  new_user = User(json['email'], hash, json['username'])
+  new_user = User(json['email'], hash_, json['username'])
 
   try:
     session.add(new_user)
