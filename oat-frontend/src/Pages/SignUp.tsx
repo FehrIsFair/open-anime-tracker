@@ -17,7 +17,7 @@ const SignUp = () => {
   
 
   const submitForm = () => {
-    if (confirmPass == password) {
+    if (confirmPass === password) {
       const request_json: User = {
         username: username,
         email: email,
@@ -56,6 +56,7 @@ const SignUp = () => {
         set_field={setConfirmPass}
       />
       <SubmitBtn variant={2} submit_func={submitForm} />
+      ({error} ? <>Error Text</> : null)
     </Box>
   );
 };

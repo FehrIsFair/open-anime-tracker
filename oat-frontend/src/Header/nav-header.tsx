@@ -1,4 +1,3 @@
-import React from 'react';
 import {Container, AppBar, Toolbar} from '@mui/material'
 
 import NavItem from './link-items';
@@ -14,6 +13,7 @@ const NavHeader = (): JSX.Element => {
           <NavItem path='/add-anime' text='Add Anime' />
           <NavItem path='/get-anime' text='Get Anime' />
           <NavItem path='/signup' text='Sign Up' />
+          <NavItem path='/signin' text='Sign In' />
         </Toolbar>
       </Container>
     </AppBar>

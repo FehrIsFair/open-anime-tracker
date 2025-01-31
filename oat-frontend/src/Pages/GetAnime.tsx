@@ -1,17 +1,8 @@
 import React from 'react';
-import { Box, AppBar, Toolbar, Typography, Button, FormControl, Card } from '@mui/material'
+import { Box, Typography, Card } from '@mui/material'
 
 import {h1} from '../TextFormating/text_config'
-import InputComponent from '../FormComps/InputComp';
-import { AnimeTypeEnum, StatusEnum, ContentRating } from '../Enums/AnimeType';
-import SelectComponent from '../FormComps/SelectComp';
-import SubmitBtn from '../FormComps/Buttons/SubmitBtn';
 import Anime from '../Models/anime';
-import _ from 'lodash';
-import { animeGet } from '../BackendRequests/anime';
-import NumberInputComponent from '../FormComps/NumberInput';
-import TextAreaComponent from '../FormComps/TextAreaComp';
-import CheckBoxComponent from '../FormComps/CheckBoxComp';
 import engine from '../BackendRequests/base';
 
 

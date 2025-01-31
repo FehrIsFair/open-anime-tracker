@@ -12,7 +12,7 @@ class ServerConfig:
   CORS_HEADERS = 'Content-Type'
   # enable session config
   SESSION_TYPE = "redis"
-  # so that session won't be permenant
+  # so that session won't be permanent
   SESSION_PERMANENT = False
   # use secret key signer
   SESSION_USE_SIGNER = True

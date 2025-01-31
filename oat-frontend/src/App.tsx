@@ -7,6 +7,7 @@ import MainPage from './Main/main-page'
 import AddAnime from './Pages/AddAnime';
 import GetAnime from './Pages/GetAnime';
 import SignUp from './Pages/SignUp';
+import SignIn from './Pages/SignIn';
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           <Route path='/add-anime' Component={AddAnime} />
           <Route path='/get-anime' Component={GetAnime} />
           <Route path='/signup' Component={SignUp} />
+          <Route path='/signin' Component={SignIn} />
         </Routes>
         {/* Footer */}
     </div>

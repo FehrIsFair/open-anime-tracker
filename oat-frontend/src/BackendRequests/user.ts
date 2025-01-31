@@ -1,6 +1,5 @@
 import axios from 'axios'
 import User, { to_json, Login } from '../Models/user'
-import engine from './base'
 
 
 export const userCreate = async (user: User) => {
@@ -20,10 +19,10 @@ export const login = async (login: Login) => {
   const payload: JSON = to_json(login)
   axios({
     method: 'POST',
-    url: 'http://localhost:5000/user/create',
+    url: 'http://localhost:5000/auth/login',
     data: payload,
   }).then((res) => {
-    return res
+    return res.data
   }).catch((err) => {
     console.log(err)
   })

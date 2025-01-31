@@ -1,7 +1,7 @@
 import datetime
 import os
 import pdb
-from passlib.hash import bcrypt as bc
+import flask_bcrypt
 
 from flask import request, Blueprint, make_response
 from flask_cors import cross_origin
@@ -38,7 +38,7 @@ def create_user():
 
   if user:
     return make_response({'Message': 'User already exists with email, username combo'}, 409)
-  hash_ = bc.using(int(os.environ.get('SALT'))).hash(json['password'])
+  hash_ = flask_bcrypt.generate_password_hash(json['password'].encode('utf-8')).decode('utf-8')
 
   new_user = User(json['email'], hash_, json['username'])
 

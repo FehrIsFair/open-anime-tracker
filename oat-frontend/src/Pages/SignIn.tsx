@@ -11,7 +11,6 @@ import { cookie_handler } from "../extentsions/helper_funcs"
 const SignUp = () => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const
 
   const submitForm = () => {
     const request_json: Login = {
@@ -19,7 +18,7 @@ const SignUp = () => {
       password: password
     }
     let res = login(request_json)
-
+    debugger;
   };
  
   return (
