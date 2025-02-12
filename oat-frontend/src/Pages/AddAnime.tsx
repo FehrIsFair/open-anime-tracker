@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
+import { redirect } from 'react-router-dom'
 
 import { h1 } from "../TextFormating/text_config";
 import InputComponent from "../FormComps/InputComp";
@@ -11,6 +12,7 @@ import { animePost } from "../BackendRequests/anime";
 import NumberInputComponent from "../FormComps/NumberInput";
 import TextAreaComponent from "../FormComps/TextAreaComp";
 import CheckBoxComponent from "../FormComps/CheckBoxComp";
+import { AuthContext } from "../context/auth_context";
 
 const AddAnime = () => {
   const [animeType, setAnimeType] = React.useState("show");
@@ -22,6 +24,7 @@ const AddAnime = () => {
   const [seasons, setSeasons] = React.useState(1);
   const [episodes, setEpisodes] = React.useState(1);
   const [nsfw, setNsfw] = React.useState(false);
+  const context = useContext(AuthContext)
 
   const submitForm = () => {
     const request_json: Anime = {
@@ -38,6 +41,12 @@ const AddAnime = () => {
     };
     animePost(request_json);
   };
+
+  useEffect(() => {
+    if (!context) {
+      redirect('/login')
+    }
+  })
 
   return (
     <Box>

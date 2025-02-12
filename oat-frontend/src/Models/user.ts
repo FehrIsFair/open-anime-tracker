@@ -2,9 +2,9 @@ import _ from 'lodash'
 
 
 interface User {
-  username: string
-  email: string
-  password: string
+  username: string | null
+  email: string | null
+  password: string | null
 }
 
 

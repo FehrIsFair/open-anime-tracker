@@ -15,15 +15,12 @@ export const userCreate = async (user: User) => {
   })
 }
 
-export const login = async (login: Login) => {
+export const login = async (login: Login): Promise<any> => {
   const payload: JSON = to_json(login)
-  axios({
+  let res = await axios({
     method: 'POST',
     url: 'http://localhost:5000/auth/login',
     data: payload,
-  }).then((res) => {
-    return res.data
-  }).catch((err) => {
-    console.log(err)
   })
+  return res
 }
