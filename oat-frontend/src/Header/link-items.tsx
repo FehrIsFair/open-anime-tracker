@@ -4,7 +4,7 @@ import { Typography, Button } from '@mui/material'
 import { p } from '../TextFormating/text_config'
 
 
-interface NavProps {
+export interface NavProps {
   path: string
   text: string
 }

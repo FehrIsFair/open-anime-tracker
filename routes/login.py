@@ -1,16 +1,16 @@
 import pdb
-import random
-from datetime import datetime
 import bcrypt
 from uuid import uuid4
-from werkzeug.http import dump_cookie
 
-from flask import request, Blueprint, make_response, jsonify
-from flask import session as sesh
+from flask import request, Blueprint, make_response, jsonify, session as sesh
 from flask_cors import cross_origin
+
 
 from database import session
 from db_models.users import User
+
+
+
 
 
 login_routes = Blueprint('auth', __name__)
@@ -27,7 +27,7 @@ def login():
     return make_response({'Message': 'Invalid Username or Password'}, 401)
   uuid = str(uuid4())
   sesh[user.username] = uuid
-  res = make_response(jsonify(uuid), 200)
+  res = make_response(jsonify(uuid, user.email, user.username), 200)
   return res
 
 
@@ -49,7 +49,9 @@ def logout():
 def check_auth():
   json = request.get_json()
   username = ''
-  if json['cookie'] in sesh.values():
+  pdb.set_trace()
+  if json['cookie'] in sesh:
+    pdb.set_trace()
     for key, value in sesh.items():
       if value == json['cookie']:
         username = key

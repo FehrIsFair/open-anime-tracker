@@ -1,6 +1,6 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { Box, Typography } from "@mui/material";
-import { redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 
 import { h1 } from "../TextFormating/text_config";
 import InputComponent from "../FormComps/InputComp";
@@ -41,14 +41,8 @@ const AddAnime = () => {
     };
     animePost(request_json);
   };
-
-  useEffect(() => {
-    if (!context) {
-      redirect('/login')
-    }
-  })
-
-  return (
+  
+  return context.user != null ? (
     <Box>
       <Typography variant="h1" sx={h1}>
         Create an anime
@@ -107,6 +101,9 @@ const AddAnime = () => {
       <CheckBoxComponent value={nsfw} set_value={setNsfw} label="NSFW" />
       <SubmitBtn variant={2} submit_func={submitForm}></SubmitBtn>
     </Box>
-  );
+  ) : (
+    <Navigate to="/signin" />
+  )
+  ;
 };
 export default AddAnime;

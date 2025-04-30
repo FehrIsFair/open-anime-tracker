@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box } from "@mui/material";
 
 import EmailComponent from "../FormComps/EmailComponent";
@@ -7,10 +7,13 @@ import PasswordComponent from "../FormComps/PasswordComp";
 import { Login } from "../Models/user";
 import { cookie_handler } from "../extentsions/helper_funcs"
 import engine from "../BackendRequests/base";
+import { AuthContext } from "../context/auth_context";
+import { redirect } from "react-router-dom";
 
 const SignIn = () => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const context = useContext(AuthContext)
 
   const submitForm = async () => {
     const request_json: Login = {
@@ -18,7 +21,17 @@ const SignIn = () => {
       password: password
     }
     let res = await engine.post('/auth/login', request_json)
-    cookie_handler.set('oat', res.data)
+    let uuid = res.data[0]
+    let _email = res.data[1]
+    let username = res.data[2]
+    if (_email) {
+      cookie_handler.set('oat', uuid)
+      context.setLogin({username: username, password: null, email: email})
+      redirect('/add-anime')
+    } else {
+      console.log("Didn't log user in.")
+    }
+    
   }
  
   return (

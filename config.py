@@ -1,6 +1,6 @@
 import os
 
-import redis
+from redis.client import Redis
 
 import const
 
@@ -17,5 +17,5 @@ class ServerConfig:
   # use secret key signer
   SESSION_USE_SIGNER = True
   # set the path
-  SESSION_REDIS = redis.from_url(f"redis://{const.REDIS_IP}:6379")
+  SESSION_REDIS = Redis.from_url(f"redis://{const.REDIS_IP}:6379")
 

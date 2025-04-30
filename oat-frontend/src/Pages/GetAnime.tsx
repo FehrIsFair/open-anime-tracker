@@ -1,15 +1,19 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { Box, Typography, Card } from '@mui/material'
 
 import {h1} from '../TextFormating/text_config'
 import Anime from '../Models/anime';
 import engine from '../BackendRequests/base';
+import { AuthContext } from "../context/auth_context";
+import { Navigate } from 'react-router-dom';
+
 
 
 
 const GetAnime = () => {
   const [anime, setAnime] = React.useState(Array<Anime>)
   const [loaded, setLoaded] = React.useState(false)
+  const context = useContext(AuthContext)
 
   React.useEffect(() => {
     if (!loaded && anime) {
@@ -27,7 +31,7 @@ const GetAnime = () => {
   }, [anime, setAnime, loaded])
 
 
-  return (
+  return context.user != null ? (
     <Box>
       <Typography
         variant="h1"
@@ -46,6 +50,8 @@ const GetAnime = () => {
         )
       })}
     </Box>
+  ) : (
+    <Navigate to='/signin' />
   )
 }
 export default GetAnime

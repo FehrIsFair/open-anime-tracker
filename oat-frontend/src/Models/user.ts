@@ -8,6 +8,12 @@ interface User {
 }
 
 
+export interface Auth {
+  user: User | null,
+  setUser: CallableFunction | null
+}
+
+
 export const to_json = (object: any): any => {
   return _(object).toJSON()
 }
