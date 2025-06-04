@@ -5,6 +5,7 @@ import EmailComponent from "../FormComps/EmailComponent";
 import SubmitBtn from "../FormComps/Buttons/SubmitBtn";
 import PasswordComponent from "../FormComps/PasswordComp";
 import { Login } from "../Models/user";
+import {CookieSetOptions} from 'universal-cookie'
 import { cookie_handler } from "../extentsions/helper_funcs"
 import engine from "../BackendRequests/base";
 import { AuthContext } from "../context/auth_context";
@@ -25,7 +26,14 @@ const SignIn = () => {
     let _email = res.data[1]
     let username = res.data[2]
     if (_email) {
-      cookie_handler.set('oat', uuid)
+      let now: Date = new Date()
+      const time: number = now.getTime();
+      const expireTime: number = time + 1000*28800;
+      now.setTime(expireTime)
+      const options_: CookieSetOptions = {
+        expires: now
+      }
+      cookie_handler.set('oat', uuid, options_)
       context.setLogin({username: username, password: null, email: email})
       redirect('/add-anime')
     } else {
