@@ -1,52 +1,49 @@
-import React from "react"
+import React from "react";
 import { FormControl, IconButton, InputAdornment, TextField } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material"
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-interface InputProps {
+interface PasswordProps {
   id: string;
   label: string;
   value: string;
-  set_field: any;
+  onChange: (value: string) => void;
 }
 
-const PasswordComponent = (props: InputProps): JSX.Element => {
-  const [showpass, setShowpass] = React.useState(false);
+const PasswordComponent = (props: PasswordProps): JSX.Element => {
+  const [showPassword, setShowPassword] = React.useState(false);
 
-  const onChange = (event: any) => {
-    props.set_field(event.target.value as string);
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    props.onChange(event.target.value);
   };
 
-  const handleShowPassword = () => {
-    setShowpass(!showpass)
-  }
+  const handleTogglePassword = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   return (
-    <>
-      <FormControl>
-        <TextField
-          id={props.id}
-          label={props.label}
-          variant="outlined"
-          value={props.value}
-          onChange={onChange}
-          type={showpass ? "text" : "password"}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  aira-labbel="toggle password visibility"
-                  onClick={handleShowPassword}
-                  edge="end"
-                >
-                  {showpass ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            )
-          }}
-          fullWidth
-        />
-      </FormControl>
-    </>
+    <FormControl fullWidth>
+      <TextField
+        id={props.id}
+        label={props.label}
+        variant="outlined"
+        value={props.value}
+        onChange={onChange}
+        type={showPassword ? "text" : "password"}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleTogglePassword}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+    </FormControl>
   );
 };
 export default PasswordComponent;

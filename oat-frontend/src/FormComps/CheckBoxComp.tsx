@@ -1,30 +1,35 @@
-import { Checkbox } from '@mui/material'
-import React from 'react';
+import React from "react";
+import { Checkbox, FormControlLabel } from "@mui/material";
 
 interface CheckBoxProps {
-  value: boolean
-  set_value: any
-  label: string
+  id?: string;
+  value: boolean;
+  onChange: (value: boolean) => void;
+  label: string;
+  error?: string;
 }
 
-
-const CheckBoxComponent = (props: CheckBoxProps) => {
-  
-  const onChange = (event: any) => {
-    if (props.value) {
-      props.set_value(false)
-    } else {
-      props.set_value(true)
-    }
-  }
+const CheckBoxComponent = (props: CheckBoxProps): JSX.Element => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    props.onChange(event.target.checked);
+  };
 
   return (
     <>
-      <Checkbox 
-        checked={props.value}
-        onChange={onChange}
+      <FormControlLabel
+        control={
+          <Checkbox
+            id={props.id}
+            checked={props.value}
+            onChange={handleChange}
+          />
+        }
+        label={props.label}
       />
+      {props.error && (
+        <span style={{ color: "red", fontSize: "0.75rem" }}>{props.error}</span>
+      )}
     </>
-  )
-}
-export default CheckBoxComponent
+  );
+};
+export default CheckBoxComponent;

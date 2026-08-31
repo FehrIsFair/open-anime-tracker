@@ -1,7 +1,4 @@
-import pdb
-
-from flask import request, Blueprint, Response, make_response
-from flask_cors import cross_origin
+from flask import request, Blueprint, make_response
 
 from database import session
 from db_models.anime import Anime
@@ -34,7 +31,6 @@ def get_review_type(input: str):
 
 
 @anime_routes.route('/anime', methods=['GET'])
-@cross_origin(origin="localhost", headers=['Content-Type', 'Authorization'])
 def index():
   return_dict = {}
   try:
@@ -48,7 +44,6 @@ def index():
 
 
 @anime_routes.route('/anime/create', methods=['POST'])
-@cross_origin(origin="localhost", headers=['Content-Type', 'Authorization'])
 def create_anime():
   request_json = request.get_json()
   anime = session.query(Anime).filter(Anime.title == request_json['title']).first()
@@ -81,7 +76,6 @@ def create_anime():
 
 
 @anime_routes.route('/anime/edit', methods=['PATCH'])
-@cross_origin(origin="localhost", headers=['Content-Type', 'Authorization'])
 def edit_anime():
   request_json = request.get_json()
   anime = session.query(Anime).filter(Anime.id == request_json['data']['_id']).first()
@@ -105,7 +99,6 @@ def edit_anime():
 
 
 @anime_routes.route('/anime/delete', methods=['DELETE'])
-@cross_origin(origin="localhost", headers=['Content-Type', 'Authorization'])
 def delete_anime():
   request_json = request.get_json()
   anime = session.query(Anime).filter(Anime.id == request_json['data']['_id']).first()

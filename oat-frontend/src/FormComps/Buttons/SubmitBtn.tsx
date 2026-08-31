@@ -1,36 +1,21 @@
-import Button from "@mui/material/Button"
+import Button, { ButtonProps as MuiButtonProps } from "@mui/material/Button";
 
-
-interface ButtonProps {
-  variant: number
-  submit_func: any
+interface ButtonProps extends Omit<MuiButtonProps, "variant"> {
+  variant?: MuiButtonProps["variant"];
+  onSubmit?: () => void;
 }
 
-
-const SubmitBtn = (props: ButtonProps) => {
-
-  const getVariant = (choice: number) => {
-    switch (choice) {
-      case 1:
-        return 'text'
-      case 2:
-        return 'contained'
-      case 3:
-        return 'outlined'
-      default:
-        return 'contained'
-    }
-  }
+const SubmitBtn = (props: ButtonProps): JSX.Element => {
+  const { variant = "contained", children = "Submit", onSubmit, ...rest } = props;
 
   return (
-    <>
-      <Button
-        variant={getVariant(props.variant)}
-        onClick={() => props.submit_func()}
-      >
-          Submit
-      </Button>
-    </>
-  )
-}
-export default SubmitBtn
+    <Button
+      variant={variant}
+      onClick={onSubmit}
+      {...rest}
+    >
+      {children}
+    </Button>
+  );
+};
+export default SubmitBtn;

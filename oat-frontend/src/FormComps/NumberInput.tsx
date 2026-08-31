@@ -1,27 +1,30 @@
-import { TextField } from '@mui/material'
+import React from "react";
+import { FormControl, TextField } from "@mui/material";
 
-interface InputProps {
-  id: string
-  label: string
-  value: number
-  set_field: any
+interface NumberInputProps {
+  id: string;
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
 }
 
-const NumberInputComponent = (props: InputProps): JSX.Element => {
-
-  const onChange = (event: any) => {
-    props.set_field(event.target.value as number)
-  }
+const NumberInputComponent = (props: NumberInputProps): JSX.Element => {
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const parsed = Number(event.target.value);
+    props.onChange(isNaN(parsed) ? 0 : parsed);
+  };
 
   return (
-    <>
-      <TextField id={props.id} 
+    <FormControl fullWidth>
+      <TextField
+        id={props.id}
         label={props.label}
-        variant='outlined' 
+        variant="outlined"
         value={props.value}
-        onChange={onChange} 
+        onChange={onChange}
+        type="number"
       />
-    </>
-  )
-}
-export default NumberInputComponent
+    </FormControl>
+  );
+};
+export default NumberInputComponent;

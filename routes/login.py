@@ -1,23 +1,15 @@
-import pdb
 import bcrypt
 from uuid import uuid4
 
 from flask import request, Blueprint, make_response, jsonify, session as sesh
-from flask_cors import cross_origin
-
 
 from database import session
 from db_models.users import User
-
-
-
-
 
 login_routes = Blueprint('auth', __name__)
 
 
 @login_routes.route('/auth/login', methods=['POST'])
-@cross_origin(origin="localhost", headers=['Content-Type', 'Authorization'])
 def login():
   json = request.get_json()
   user = session.query(User).filter(User.email == json['email']).first()
@@ -27,31 +19,23 @@ def login():
     return make_response({'Message': 'Invalid Username or Password'}, 401)
   uuid = str(uuid4())
   sesh[user.username] = uuid
-  res = make_response(jsonify(uuid, user.email, user.username), 200)
+  res = make_response(jsonify([user.username, user.email]), 200)
   return res
 
 
 @login_routes.route('/auth/logout', methods=['POST'])
-@cross_origin(origin="localhost", headers=['Content-Type', 'Authorization'])
 def logout():
-  json = request.get_json()
-  user = session.query(User).filter(User.email == json['email']).first()
-  if not user:
-    return make_response({"Message": 'User does not exist'}, 404)
-  if user.username in sesh:
-    sesh.pop(user.username)
-    return make_response({"Message": "Successful Logout"}, 200)
-  return make_response({"Message": "No session by that user."})
+  # Clear all session entries - the session cookie is sent automatically via HTTP
+  for key in list(sesh.keys()):
+    sesh.pop(key)
+  return make_response({"Message": "Successful Logout"}, 200)
 
 
 @login_routes.route('/auth/auth_check', methods=['POST'])
-@cross_origin(origin="localhost", headers=['Content-Type', 'Authorization'])
 def check_auth():
   json = request.get_json()
   username = ''
-  pdb.set_trace()
-  if json['cookie'] in sesh:
-    pdb.set_trace()
+  if json.get('cookie') in sesh:
     for key, value in sesh.items():
       if value == json['cookie']:
         username = key

@@ -1,62 +1,56 @@
 import React, { useContext } from "react";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 import EmailComponent from "../FormComps/EmailComponent";
 import SubmitBtn from "../FormComps/Buttons/SubmitBtn";
 import PasswordComponent from "../FormComps/PasswordComp";
-import { Login } from "../Models/user";
-import {CookieSetOptions} from 'universal-cookie'
-import { cookie_handler } from "../extentsions/helper_funcs"
-import engine from "../BackendRequests/base";
+import { login } from "../BackendRequests/user";
 import { AuthContext } from "../context/auth_context";
-import { redirect } from "react-router-dom";
 
 const SignIn = () => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const context = useContext(AuthContext)
+  const [error, setError] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const { setLogin } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const submitForm = async () => {
-    const request_json: Login = {
-      email: email,
-      password: password
+    setError("");
+    setLoading(true);
+    try {
+      const data = await login({ email, password });
+      setLogin({ username: data[0]?.username || data[0], email: data[0]?.email || data[1], password: null });
+      navigate("/add-anime", { replace: true });
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Login failed. Please check your credentials.");
+    } finally {
+      setLoading(false);
     }
-    let res = await engine.post('/auth/login', request_json)
-    let uuid = res.data[0]
-    let _email = res.data[1]
-    let username = res.data[2]
-    if (_email) {
-      let now: Date = new Date()
-      const time: number = now.getTime();
-      const expireTime: number = time + 1000*28800;
-      now.setTime(expireTime)
-      const options_: CookieSetOptions = {
-        expires: now
-      }
-      cookie_handler.set('oat', uuid, options_)
-      context.setLogin({username: username, password: null, email: email})
-      redirect('/add-anime')
-    } else {
-      console.log("Didn't log user in.")
-    }
-    
-  }
- 
+  };
+
   return (
-    <Box>
+    <Box sx={{ maxWidth: 400, mx: "auto", mt: 4, p: 2 }}>
+      <Typography variant="h5" sx={{ mb: 2, textAlign: "center" }}>
+        Sign In
+      </Typography>
       <EmailComponent
         id="email"
         label="Email"
         value={email}
-        set_field={setEmail}
+        onChange={setEmail}
       />
       <PasswordComponent
         id="password"
         label="Password"
         value={password}
-        set_field={setPassword}
+        onChange={setPassword}
       />
-      <SubmitBtn variant={2} submit_func={submitForm} />
+      {error && <Typography color="error" sx={{ mt: 1, fontSize: "0.875rem" }}>{error}</Typography>}
+      <SubmitBtn variant="contained" onSubmit={submitForm} disabled={loading} sx={{ mt: 2 }}>
+        {loading ? "Signing in..." : "Submit"}
+      </SubmitBtn>
     </Box>
   );
 };

@@ -1,13 +1,8 @@
 import datetime
-import os
-import pdb
+
+from flask import request, Blueprint, make_response, jsonify
 import flask_bcrypt
-
-from flask import request, Blueprint, make_response
-from flask_cors import cross_origin
 from sqlalchemy import and_
-# bcrypt in the functions is imported locally to avoid circular imports.
-
 
 from database import session
 from db_models.users import User
@@ -16,7 +11,6 @@ user_routes = Blueprint('user', __name__)
 
 
 @user_routes.route('/user', methods=['GET'])
-@cross_origin(origin="localhost", headers=['Content-Type', 'Authorization'])
 def index():
   return_list = []
   try:
@@ -31,7 +25,6 @@ def index():
 
 
 @user_routes.route('/user/create', methods=['POST'])
-@cross_origin(origin="localhost", headers=['Content-Type', 'Authorization'])
 def create_user():
   json = request.get_json()
   user = session.query(User).filter(and_(User.email == json['email'], User.username == json['username'])).first()
@@ -53,20 +46,17 @@ def create_user():
 
 
 @user_routes.route('/user/update_pw', methods=['PATCH'])
-@cross_origin(origin="localhost", headers=['Content-Type', 'Authorization'])
-def edit_user():
+def update_password():
   json = request.get_json()
   user = session.query(User).filter(and_(User.id == json['id'])).first()
 
   if not user:
     return make_response({'Message': 'User not found'}, 500)
-  from helper_funcs import bcrypt
-  old_hash = bcrypt.generate_password_hash(json['old_password'], os.environ.get('SALT')).decode('utf-8')
-  if user.password != old_hash:
+
+  if not flask_bcrypt.checkpw(json['old_password'].encode('utf-8'), user.password.encode('utf-8')):
     return make_response({'Message': 'Old password did not match.'}, 500)
 
-  new_hash = bcrypt.generate_password_hash(json['new_password'], os.environ.get('SALT')).decode('utf-8')
-
+  new_hash = flask_bcrypt.generate_password_hash(json['new_password'].encode('utf-8')).decode('utf-8')
   user.password = new_hash
 
   try:
@@ -78,18 +68,16 @@ def edit_user():
 
 
 @user_routes.route('/user/edit', methods=['PATCH'])
-@cross_origin(origin="localhost", headers=['Content-Type', 'Authorization'])
-def pw_update():
+def edit_user():
   json = request.get_json()
   user = session.query(User).filter(and_(User.id == json['id'])).first()
 
   if not user:
     return make_response({'Message': 'User not found'}, 404)
 
-  from helper_funcs import bcrypt
-  old_hash = bcrypt.generate_password_hash(json['password'], os.environ.get('SALT')).decode('utf-8')
-  if user.password != old_hash:
-    return make_response({'Message': 'Password did not match, will not update user'}, 500)
+  if 'password' in json:
+    if not flask_bcrypt.checkpw(json['password'].encode('utf-8'), user.password.encode('utf-8')):
+      return make_response({'Message': 'Password did not match, will not update user'}, 500)
 
   kwargs = {}
   for key, value in json.items():
@@ -103,11 +91,10 @@ def pw_update():
   except Exception as e:
     print(e)
     return make_response({'Message': 'User could not be updated'}, 500)
-  return make_response(({'Message': 'User updated.'}, 200))
+  return make_response({'Message': 'User updated.'}, 200)
 
 
 @user_routes.route('/user/delete', methods=['DELETE'])
-@cross_origin(origin="localhost", headers=['Content-Type', 'Authorization'])
 def delete_user():
   json = request.get_json()
   user = session.query(User).filter(and_(User.id == json['id'])).first()
@@ -115,7 +102,7 @@ def delete_user():
   if not user:
     return make_response({'Message': 'User not found'}, 404)
 
-  user.deleted_at(datetime.datetime.utcnow())
+  user.deleted_at = datetime.datetime.utcnow()
 
   try:
     session.commit()

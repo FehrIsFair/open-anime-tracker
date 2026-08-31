@@ -1,26 +1,43 @@
-import { TextareaAutosize } from '@mui/material'
+import React from "react";
+import { FormHelperText, TextareaAutosize, Typography } from "@mui/material";
 
-interface InputProps {
-  id: string
-  value: string
-  set_field: any
-  placeholder: string
+interface TextAreaProps {
+  id: string;
+  label?: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  error?: string;
 }
 
-const TextAreaComponent = (props: InputProps): JSX.Element => {
-
-  const onChange = (event: any) => {
-    props.set_field(event.target.value as string)
-  }
+const TextAreaComponent = (props: TextAreaProps): JSX.Element => {
+  const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    props.onChange(event.target.value);
+  };
 
   return (
     <>
-      <TextareaAutosize id={props.id} 
+      {props.label && (
+        <Typography variant="subtitle2" sx={{ mt: 1 }}>{props.label}</Typography>
+      )}
+      <TextareaAutosize
+        id={props.id}
         placeholder={props.placeholder}
         value={props.value}
-        onChange={onChange} 
+        onChange={onChange}
+        minRows={3}
+        style={{
+          width: "100%",
+          padding: "8px",
+          boxSizing: "border-box",
+          border: "1px solid",
+          borderColor: props.error ? "error.main" : "divider",
+          borderRadius: 4,
+          fontSize: "1rem",
+        }}
       />
+      {props.error && <FormHelperText error={!!props.error}>{props.error}</FormHelperText>}
     </>
-  )
-}
-export default TextAreaComponent
+  );
+};
+export default TextAreaComponent;

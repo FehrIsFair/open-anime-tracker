@@ -1,17 +1,16 @@
 import React, { useContext } from "react";
 import { Box, Typography } from "@mui/material";
-import { Navigate } from 'react-router-dom'
+import { Navigate } from "react-router-dom";
 
 import { h1 } from "../TextFormating/text_config";
 import InputComponent from "../FormComps/InputComp";
 import { AnimeTypeEnum, StatusEnum, ContentRating } from "../Enums/AnimeType";
-import SelectComponent from "../FormComps/SelectComp";
 import SubmitBtn from "../FormComps/Buttons/SubmitBtn";
-import Anime from "../Models/anime";
-import { animePost } from "../BackendRequests/anime";
 import NumberInputComponent from "../FormComps/NumberInput";
 import TextAreaComponent from "../FormComps/TextAreaComp";
 import CheckBoxComponent from "../FormComps/CheckBoxComp";
+import SelectComponent from "../FormComps/SelectComp";
+import { animePost } from "../BackendRequests/anime";
 import { AuthContext } from "../context/auth_context";
 
 const AddAnime = () => {
@@ -24,86 +23,117 @@ const AddAnime = () => {
   const [seasons, setSeasons] = React.useState(1);
   const [episodes, setEpisodes] = React.useState(1);
   const [nsfw, setNsfw] = React.useState(false);
-  const context = useContext(AuthContext)
+  const [error, setError] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const { user } = useContext(AuthContext);
 
-  const submitForm = () => {
-    const request_json: Anime = {
-      rating: null,
-      title: animeTitle,
-      jp_title: jpTitle,
-      _type: animeType,
-      seasons: seasons,
-      episodes: episodes,
-      desc: desc,
-      status: status,
-      content_rating: contentRating,
-      nsfw: nsfw,
-    };
-    animePost(request_json);
+  const submitForm = async () => {
+    setError("");
+
+    if (!animeTitle.trim()) {
+      setError("Title is required.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const request = {
+        rating: null,
+        title: animeTitle.trim(),
+        jp_title: jpTitle.trim(),
+        _type: animeType,
+        seasons,
+        episodes,
+        desc,
+        status,
+        content_rating: contentRating,
+        nsfw,
+      };
+      await animePost(request);
+      // Optionally reset form or redirect after success
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to create anime entry.");
+    } finally {
+      setLoading(false);
+    }
   };
-  
-  return context.user != null ? (
-    <Box>
+
+  if (user == null) {
+    return <Navigate to="/signin" />;
+  }
+
+  return (
+    <Box sx={{ maxWidth: 600, mx: "auto", mt: 4, p: 2 }}>
       <Typography variant="h1" sx={h1}>
-        Create an anime
+        Create an Anime
       </Typography>
       <InputComponent
         id="anime-title"
         label="Title"
         value={animeTitle}
-        set_field={setAnimeTitle}
+        onChange={setAnimeTitle}
       />
       <InputComponent
         id="jp-title"
         label="JP Title"
         value={jpTitle}
-        set_field={setJpTitle}
+        onChange={setJpTitle}
       />
       <NumberInputComponent
         id="number-seasons"
         label="# of Seasons"
         value={seasons}
-        set_field={setSeasons}
+        onChange={setSeasons}
       />
       <NumberInputComponent
         id="number-episodes"
         label="# of Episodes"
         value={episodes}
-        set_field={setEpisodes}
+        onChange={setEpisodes}
       />
       <TextAreaComponent
         id="description"
+        label="Description"
         value={desc}
-        set_field={setDesc}
-        placeholder="A boy named Satou Satou is looking to become the best plastic sergeon..."
+        onChange={setDesc}
+        placeholder="A boy named Satou Satou is looking to become the best plastic surgeon..."
       />
       <SelectComponent
         id="AnimeTypeSelect"
-        label_id="anime-type"
+        label="Type"
         value={animeType}
-        setValue={setAnimeType}
-        menu_options={AnimeTypeEnum}
+        onChange={setAnimeType}
+        options={AnimeTypeEnum}
       />
       <SelectComponent
         id="StatusSelect"
-        label_id="status"
+        label="Status"
         value={status}
-        setValue={setStatus}
-        menu_options={StatusEnum}
+        onChange={setStatus}
+        options={StatusEnum}
       />
       <SelectComponent
         id="ContentSelect"
-        label_id="content-rating"
+        label="Content Rating"
         value={contentRating}
-        setValue={setContentRating}
-        menu_options={ContentRating}
+        onChange={setContentRating}
+        options={ContentRating}
       />
-      <CheckBoxComponent value={nsfw} set_value={setNsfw} label="NSFW" />
-      <SubmitBtn variant={2} submit_func={submitForm}></SubmitBtn>
+      <CheckBoxComponent
+        value={nsfw}
+        onChange={setNsfw}
+        label="NSFW"
+      />
+      {error && <Typography color="error" sx={{ mt: 1, fontSize: "0.875rem" }}>{error}</Typography>}
+      <SubmitBtn
+        variant="contained"
+        onSubmit={submitForm}
+        disabled={loading}
+        sx={{ mt: 2 }}
+      >
+        {loading ? "Saving..." : "Submit"}
+      </SubmitBtn>
     </Box>
-  ) : (
-    <Navigate to="/signin" />
-  )
-  ;
+  );
 };
 export default AddAnime;

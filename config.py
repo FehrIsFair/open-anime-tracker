@@ -10,7 +10,7 @@ class ServerConfig:
   SQLALCHEMY_DATABASE_URI = (f'postgresql://{const.PG_USER}:{const.PG_PW}@127.0.0.1:{const.PG_PORT}/db')
   SQLALCHEMY_TRACK_MODIFICATIONS = True
   CORS_HEADERS = 'Content-Type'
-  # enable session config
+  # CORS will be configured per-resource in main.py with supports_credentials
   SESSION_TYPE = "redis"
   # so that session won't be permanent
   SESSION_PERMANENT = False

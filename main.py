@@ -17,7 +17,7 @@ data_store_db_obj  = SQLAlchemy()
 
 app = Flask(__name__)
 api = Api(app)
-CORS(app, resource={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000", "supports_credentials": True}})
 app.config.from_object(ServerConfig)
 bcrypt = Bcrypt(app)
 
