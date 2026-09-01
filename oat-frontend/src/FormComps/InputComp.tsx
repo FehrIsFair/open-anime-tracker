@@ -16,6 +16,7 @@ const InputComponent = (props: InputProps): JSX.Element => {
   return (
     <FormControl fullWidth>
       <TextField
+        data-testid={props.id}
         id={props.id}
         label={props.label}
         variant="outlined"

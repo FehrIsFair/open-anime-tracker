@@ -7,11 +7,16 @@ from flask_session import Session
 
 from flask_restful import Api
 
-from config import ServerConfig
+from config import ServerConfig, _redis_valid
 from routes.anime import anime_routes
 from routes.login import login_routes
 from routes.user import user_routes
 from flask_bcrypt import Bcrypt
+
+if not _redis_valid:
+  print("\nFATAL: Redis is not available. Cannot start without session storage.\n")
+  import sys
+  sys.exit(1)
 
 data_store_db_obj  = SQLAlchemy()
 

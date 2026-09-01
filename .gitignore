@@ -11,3 +11,6 @@ __pycache__/
 data/
 
 *.json
+
+#MCP an AI STUFF
+.playwright-mcp/*

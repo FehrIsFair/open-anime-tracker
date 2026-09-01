@@ -10,6 +10,7 @@ const SubmitBtn = (props: ButtonProps): JSX.Element => {
 
   return (
     <Button
+      data-testid="submit-btn"
       variant={variant}
       onClick={onSubmit}
       {...rest}

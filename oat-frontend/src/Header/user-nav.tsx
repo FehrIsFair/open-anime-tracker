@@ -33,7 +33,7 @@ const UserNav = () => {
             {routes.map((route) => (
                 <NavItem key={route.path} path={route.path} text={route.text} />
             ))}
-            <Button variant="outlined" color="error" onClick={handleLogout}>
+            <Button variant="outlined" color="error" onClick={handleLogout} data-testid="sign-out-btn">
                 Sign Out
             </Button>
         </Box>

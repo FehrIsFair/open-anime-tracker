@@ -23,6 +23,7 @@ const PasswordComponent = (props: PasswordProps): JSX.Element => {
   return (
     <FormControl fullWidth>
       <TextField
+        data-testid={props.id}
         id={props.id}
         label={props.label}
         variant="outlined"

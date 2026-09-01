@@ -12,7 +12,7 @@ export interface NavProps {
 
 const NavItem = (props: NavProps): JSX.Element => {
   return (
-    <Button>
+    <Button data-testid={`nav-${props.text.toLowerCase().replace(/\s/g, '-')}`}>
       <Link to={props.path}>
         <Typography
           noWrap

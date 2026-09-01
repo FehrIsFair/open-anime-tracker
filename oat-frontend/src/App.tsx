@@ -1,3 +1,4 @@
+import React from 'react';
 import {BrowserRouter, Route, Routes, Navigate} from 'react-router-dom'
 import './App.css'
 
@@ -7,7 +8,7 @@ import AddAnime from './Pages/AddAnime';
 import GetAnime from './Pages/GetAnime';
 import SignUp from './Pages/SignUp';
 import SignIn from './Pages/SignIn';
-import { AuthProvider } from './context/auth_context';
+import { AuthProvider, AuthRoute, AuthContext, Auth } from './context/auth_context';
 
 
 function App() {
@@ -17,14 +18,23 @@ function App() {
       <div className="content-container">
           <NavHeader/>
           <Routes>
-            <Route path='/' Component={MainPage} />
-            <Route path='/add-anime' Component={AddAnime} />
-            <Route path='/get-anime' Component={GetAnime} />
-            <Route path='/signup' Component={SignUp} />
-            <Route path='/signin' Component={SignIn} />
+            <Route path='/' element={<AuthRoute><MainPage /></AuthRoute>} />
+            <Route path='/add-anime' element={<AuthRoute><AddAnime /></AuthRoute>} />
+            <Route path='/get-anime' element={<AuthRoute><GetAnime /></AuthRoute>} />
+            {/* Redirect authenticated users away from auth pages */}
+            <Route path='/signup' element={
+              <AuthRedirect>
+                <SignUp />
+              </AuthRedirect>
+            } />
+            <Route path='/signin' element={
+              <AuthRedirect>
+                <SignIn />
+              </AuthRedirect>
+            } />
             <Route 
                 path='*' 
-                element={<Navigate to='/login' replace />} 
+                element={<Navigate to='/signin' replace />} 
             />
           </Routes>
           {/* Footer */}
@@ -33,5 +43,15 @@ function App() {
   </AuthProvider>
   );
 }
+
+// Redirect authenticated users away from public-only routes
+const AuthRedirect: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, loading } = React.useContext<Auth>(AuthContext);
+
+  if (loading) return null;
+  if (user) return <Navigate to="/add-anime" replace />;
+
+  return <>{children}</>;
+};
 
 export default App;

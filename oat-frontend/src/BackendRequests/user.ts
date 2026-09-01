@@ -24,12 +24,32 @@ export const login = async (login: Login): Promise<any> => {
   }
 }
 
+export const loginAs = async (email: string): Promise<any> => {
+  try {
+    const res = await engine.post('/auth/login_as', { email })
+    return res.data
+  } catch (err: any) {
+    console.error('loginAs error:', err.response?.data || err.message)
+    throw err
+  }
+}
+
 export const logout = async (): Promise<any> => {
   try {
     const res = await engine.post('/auth/logout')
     return res.data
   } catch (err: any) {
     console.error('logout error:', err.response?.data || err.message)
+    throw err
+  }
+}
+
+export const validateSession = async (): Promise<any> => {
+  try {
+    const res = await engine.get('/auth/validate')
+    return res.data
+  } catch (err: any) {
+    console.error('validateSession error:', err.response?.data || err.message)
     throw err
   }
 }

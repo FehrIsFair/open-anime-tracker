@@ -8,7 +8,7 @@ PG_USER = os.environ.get("POSTGRES_USER")
 PG_PW = os.environ.get("POSTGRES_PASSWORD")
 PG_PORT = os.environ.get("PG_PORT")
 SALT = int(os.environ.get("SALT"))
-REDIS_IP = os.environ.get("REDIS_IP")
+REDIS_IP = os.environ.get("REDIS_IP") or '127.0.0.1'
 
 kitsu_api_base = 'https://kitsu.io/api/edge'
 kitsu_headers = {'Accept': 'application/vnd.api+json', 'Content-Type': 'application/vnd.api+json'}

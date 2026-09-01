@@ -6,7 +6,7 @@ import InputComponent from "../FormComps/InputComp";
 import EmailComponent from "../FormComps/EmailComponent";
 import SubmitBtn from "../FormComps/Buttons/SubmitBtn";
 import PasswordComponent from "../FormComps/PasswordComp";
-import { userCreate } from "../BackendRequests/user";
+import { userCreate, loginAs } from "../BackendRequests/user";
 import { AuthContext } from "../context/auth_context";
 
 const SignUp = () => {
@@ -30,6 +30,7 @@ const SignUp = () => {
     setLoading(true);
     try {
       await userCreate({ username, email, password });
+      await loginAs(email);
       setLogin({ username, email, password: null });
       navigate("/add-anime", { replace: true });
     } catch (err: any) {
