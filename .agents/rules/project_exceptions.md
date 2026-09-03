@@ -41,4 +41,4 @@ except InvalidEnumException:
 ## Dependencies
 
 - Routes that catch custom exceptions → [`rules/routes.md`](routes.md)
-- Enum types that trigger `InvalidEnumException` → [`rules/enums.md`](enums.md) (planned)
+- Enum types that trigger `InvalidEnumException` → [`rules/enums.md`](enums.md)

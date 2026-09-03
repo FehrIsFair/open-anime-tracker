@@ -7,10 +7,11 @@ The `routes/` directory contains all Flask API endpoint definitions. Each route 
 ## Conventions
 
 - **Always use `Blueprint`** — `flask_classful.FlaskView` should be avoided. See `list.py` as a deprecated example.
-- **Always apply `@cross_origin(origin="*")` on route functions** — required for proper communication with the React dev server. The global CORS config in `main.py` alone is not sufficient.
+- **CORS is configured globally** in `main.py` via `CORS(app, resources={r"/*": {...}})` with `supports_credentials: True`. Do not use per-function `@cross_origin` decorators.
 - **Return consistent response format** — use `make_response(jsonify({...}), status_code)` for all JSON responses.
 - **Handle errors explicitly** — wrap DB operations in `try/except` and return `{'Message': '...', status_code}`.
 - **Use the shared `session`** from `database.py` — do not import `db.session` from SQLAlchemy directly.
+- **Set `sesh.modified = True`** after modifying the session object during auth flows to ensure Flask recognizes changes and persists the session cookie.
 
 ## Route Files
 
@@ -26,9 +27,10 @@ Handles CRUD for anime entries. Uses the `anime` blueprint prefix.
 | `DELETE` | `/anime/delete` | Soft-delete an anime |
 
 **Dependencies:**
-- [`db_models/anime.py`](../db_models/anime.py) — `Anime` model (link to `rules/models.md` for details)
+- [`db_models/anime.py`](../db_models/anime.py) — `Anime` model
 - [`enums/db_enums.py`](../enums/db_enums.py) — `AnimeType`, `ReviewStatus`
 - [`project_exceptions/exceptions.py`](../project_exceptions/exceptions.py) — `InvalidEnumException`
+- [`rules/enums.md`](enums.md) — enum definitions and validation conventions
 
 **Key patterns:**
 - `get_anime_type()` and `get_review_type()` validate enum inputs — throws `InvalidEnumException` on invalid values.
@@ -49,25 +51,24 @@ Handles user management (listing, creation, updates, deletion). Uses the `user` 
 
 **Dependencies:**
 - [`db_models/users.py`](../db_models/users.py) — `User` model
-- `flask_bcrypt` — password hashing
-- [`helper_funcs.py`](../helper_funcs.py) — `bcrypt` (imported locally to avoid circular imports)
+- `flask_bcrypt` — password hashing (imported as `flask_bcrypt` module, not locally)
 
 **Key patterns:**
 - Passwords are hashed with `flask_bcrypt.generate_password_hash()` during creation.
 - `edit_user` requires the current password in `json['password']` before allowing updates.
 - `delete_user` sets `deleted_at` (soft delete) instead of removing the record.
 
-> **Naming inconsistency:** `update_pw` and `edit` are swapped in purpose relative to their names. `update_pw` updates the password; `edit` updates profile fields. Consider renaming for clarity.
-
 ### [`routes/login.py`](../routes/login.py)
 
-Handles authentication (login, logout, auth check). Uses the `auth` blueprint prefix.
+Handles authentication (login, logout, session validation). Uses the `auth` blueprint prefix.
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `POST` | `/auth/login` | Authenticate user and create session |
-| `POST` | `/auth/logout` | Invalidate user session |
-| `POST` | `/auth/auth_check` | Verify an existing session |
+| `POST` | `/auth/login_as` | Create a session for an existing user (used after signup) |
+| `GET` | `/auth/validate` | Verify current session user still exists in DB |
+| `POST` | `/auth/logout` | Clear all session entries |
+| `POST` | `/auth/auth_check` | Verify an existing session by cookie UUID |
 
 **Dependencies:**
 - [`db_models/users.py`](../db_models/users.py) — `User` model
@@ -75,24 +76,22 @@ Handles authentication (login, logout, auth check). Uses the `auth` blueprint pr
 - `bcrypt` — password verification
 - `uuid.uuid4` — session token generation
 
-**Known issue:** User sessions are not properly persisted on login — refreshing the page clears auth. The fix requires a `Set-Cookie` header in the login response to ensure the session cookie is sent to the browser. This is tracked as a future task.
-
 **Key patterns:**
-- Login creates a session entry: `session[user.username] = uuid4()`.
-- Logout removes the session entry for the user.
-- Auth check looks up the session by the passed cookie UUID and returns the username.
+- Login creates session entries: `sesh['username'] = user.username`, `sesh[str(user.username)] = uuid`, `sesh['login_uuid'] = uuid`.
+- `sesh.modified = True` is set after session writes to ensure Flask persists the cookie.
+- Logout clears all session entries via iteration over `sesh.keys()`.
+- `validate_session` checks the current session username against the DB (replaces the older cookie-lookup `auth_check` approach).
+- `auth_check` still exists and looks up sessions by cookie UUID for backward compatibility.
 
 ### [`routes/list.py`](../routes/list.py)
 
-Handles user anime lists (watchlist tracking). Uses `FlaskView` (class-based) — **deprecated pattern**.
+⚠️ **Deprecated — not yet converted to Blueprint.** Currently uses `FlaskView` (class-based) and is **not registered** in `main.py`.
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `GET` | `/list/<int:_id>` | Get a list by ID |
 | `POST` | `/list` | Add anime to a user's list |
 | `DELETE` | `/list` | Remove anime from a user's list |
-
-**⚠️ Not yet registered in `main.py` — blocked on session persistence fix.** Once auth is resolved (see `login.py` section), this file will be converted from `FlaskView` to `Blueprint` and registered alongside the other routes.
 
 Current outdated patterns:
 - Uses `FlaskView` instead of `Blueprint`.
@@ -106,12 +105,10 @@ Current outdated patterns:
 All active blueprints are registered in [`main.py`](../main.py):
 
 ```python
-app.register_blueprint(anime_routes)  # prefix: /anime
-app.register_blueprint(user_routes)   # prefix: /user
-app.register_blueprint(login_routes)  # prefix: /auth
+app.register_blueprint(anime_routes)
+app.register_blueprint(user_routes)
+app.register_blueprint(login_routes)
 ```
-
-The `list.py` `FlaskView` was intended to be registered via `ListView.register(app)` but is currently commented out in `__init__.py`.
 
 ## Response Format Standards
 
