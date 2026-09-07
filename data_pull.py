@@ -1,16 +1,15 @@
-import pdb
 
-from numpy._core.strings import isnumeric
-from requests import request
-import sys
-import json
 import ast
+import json
+import sys
 
-from const import kitsu_api_base,  kitsu_headers
+from requests import request
+
+from const import kitsu_api_base, kitsu_headers
 from database import session
 from db_models.anime import Anime
 from db_models.seasons import Seasons
-from enums.db_enums import SeasonType, AnimeType, ReviewStatus
+from enums.db_enums import AnimeType, ReviewStatus, SeasonType
 
 
 def get_title_dict(x: dict) -> dict:

@@ -1,7 +1,6 @@
-import pdb
-from datetime import datetime
+from datetime import UTC, datetime
 
-from sqlalchemy import Column, Integer, String, Float, Enum, JSON, DateTime, Boolean
+from sqlalchemy import JSON, Boolean, Column, DateTime, Enum, Float, Integer, String
 
 from db_models.base import Base
 from enums.db_enums import AnimeType, ReviewStatus
@@ -18,12 +17,12 @@ class Anime(Base):
   _type = Column(Enum(AnimeType), nullable=False)
   seasons = Column(Integer, default=1)
   episodes = Column(Integer, default=12, nullable=True)
-  desc = Column(String(), nullable=True)
+  desc = Column(String, nullable=True)
   status = Column(Enum(ReviewStatus), nullable=False)
-  created_at = Column(DateTime, default=datetime.utcnow())
-  updated_at = Column(DateTime, default=datetime.utcnow())
+  created_at = Column(DateTime(timezone=True), default=datetime.now(tz=UTC))
+  updated_at = Column(DateTime(timezone=True), default=datetime.now(tz=UTC))
   rank = Column(Integer, nullable=True)
-  content_rating = Column(String(), default='PG')
+  content_rating = Column(String, default='PG')
   nsfw = Column(Boolean, default=False)
 
   def __init__(self, title:str, _type: AnimeType, status: ReviewStatus = ReviewStatus.pending, **kwargs):

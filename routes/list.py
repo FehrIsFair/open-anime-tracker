@@ -1,10 +1,11 @@
 from operator import and_
 
-from flask import MethodView, request
-from sqlalchemy import db
-from db_models.list import List
-from db_models.anime import Anime
 from flask_classful import FlaskView
+from sqlalchemy import db
+from sqlalchemy.exc import SQLAlchemyError
+
+from db_models.anime import Anime
+from db_models.list import List
 
 
 class ListView(FlaskView):
@@ -19,7 +20,7 @@ class ListView(FlaskView):
     if not lists:
       return 404, "List not found."
     for list in lists:
-      anime = anime = db.session.query(Anime).filter(Anime.id == list.anime_id).first()
+      anime = db.session.query(Anime).filter(Anime.id == list.anime_id).first()
       anime_list.append(anime)
     if not anime_list:
       return 404, "List not found"
@@ -30,7 +31,7 @@ class ListView(FlaskView):
     try:
       db.session.add(list)
       db.session.commit()
-    except Exception as e:
+    except SQLAlchemyError:
       return 500, "Anime could not be added to the list"
     return 200, {'Saved to List'}
 
@@ -41,7 +42,6 @@ class ListView(FlaskView):
     db.session.delete(list)
     try:
       db.session.commit()
-    except Exception as e:
+    except SQLAlchemyError:
       return 500, "Anime could not be removed from the list"
     return 200, "Anime was removed from the list"
-

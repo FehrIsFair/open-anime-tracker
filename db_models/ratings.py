@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Float, Enum, JSON, ForeignKey
+from sqlalchemy import Column, ForeignKey, Integer
+
 from db_models.base import Base
 
 

@@ -1,11 +1,10 @@
 import json
-import pdb
 
 from data_pull import get_title_dict
 from database import session
 from db_models.anime import Anime
-from enums.db_enums import AnimeType, ReviewStatus, SeasonType
 from db_models.seasons import Seasons
+from enums.db_enums import AnimeType, ReviewStatus, SeasonType
 
 anime_ids = ['13569', '41982']
 

@@ -1,4 +1,5 @@
-from flask import request, Blueprint, make_response
+from flask import Blueprint, make_response, request
+from sqlalchemy.exc import SQLAlchemyError
 
 from database import session
 from db_models.anime import Anime
@@ -35,7 +36,7 @@ def index():
   return_dict = {}
   try:
     req_anime = session.query(Anime).all()
-  except Exception as e:
+  except SQLAlchemyError as e:
     print(e)
     return make_response({'Message': 'Failed to fetch anime'}, 500)
   return_dict['data'] = [a.make_json() for a in req_anime]
@@ -68,7 +69,7 @@ def create_anime():
   try:
     session.add(anime)
     session.commit()
-  except Exception as e:
+  except SQLAlchemyError as e:
     print(e)
     return make_response({'Message': 'Failed to create anime'}, 500)
 
@@ -92,7 +93,7 @@ def edit_anime():
 
   try:
     session.commit()
-  except Exception as e:
+  except SQLAlchemyError as e:
     print(e)
     return make_response({'Message': 'Failed to commit changes to Anime'}, 500)
   return make_response({'Message': 'Anime Updated'}, 200)
@@ -110,7 +111,7 @@ def delete_anime():
 
   try:
     session.commit()
-  except Exception as e:
+  except SQLAlchemyError as e:
     print(e)
     return make_response({'Message': 'Could not delete anime'}, 500)
   return make_response({'Message': 'Anime Successfully deleted'}, 200)

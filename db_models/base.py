@@ -1,5 +1,5 @@
-from sqlalchemy.orm import DeclarativeBase
 import sqlalchemy.ext.declarative as dec
+from sqlalchemy.orm import DeclarativeBase
 
 
 class Base(DeclarativeBase):

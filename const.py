@@ -1,6 +1,6 @@
-from dotenv import load_dotenv
 import os
-from requests import request
+
+from dotenv import load_dotenv
 
 load_dotenv()
 

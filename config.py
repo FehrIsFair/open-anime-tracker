@@ -1,6 +1,7 @@
 import os
 
 from redis.client import Redis
+from redis.exceptions import ConnectionError as RedisConnectionError
 
 import const
 
@@ -17,13 +18,13 @@ def _validate_redis_connection():
     _redis_client.ping()
     print(f"[config] Redis connected successfully at {_redis_url}")
     return True
-  except Exception as e:
+  except RedisConnectionError as e:
     import sys
     print(f"\n{'=' * 60}", file=sys.stderr)
-    print(f"ERROR: Redis connection failed at startup!", file=sys.stderr)
+    print("ERROR: Redis connection failed at startup!", file=sys.stderr)
     print(f"  URL: {_redis_url}", file=sys.stderr)
     print(f"  Error: {e}", file=sys.stderr)
-    print(f"  Ensure Redis is running: docker compose up -d redis", file=sys.stderr)
+    print("  Ensure Redis is running: docker compose up -d redis", file=sys.stderr)
     print(f"{'=' * 60}\n", file=sys.stderr)
     return False
 

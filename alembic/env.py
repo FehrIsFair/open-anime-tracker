@@ -1,18 +1,9 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-
-
 from db_models.base import Base
-from db_models.anime import Anime
-from db_models.seasons import Seasons
-from db_models.ratings import Rating
-from db_models.users import User
-from db_models.list import List
-from db_models.invites import Invites
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

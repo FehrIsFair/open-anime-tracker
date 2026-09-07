@@ -22,7 +22,7 @@ This directory contains all SQLAlchemy ORM models for Open Anime Tracker.
 | `Integer` | `INTEGER` | Primary keys, counts, FKs |
 | `String` | `VARCHAR` | Text, UUIDs |
 | `Float` | `FLOAT` | Ratings, scores |
-| `DateTime` | `TIMESTAMP` | Timestamps; use `default=datetime.utcnow()` |
+| `DateTime` | `TIMESTAMP` | Timestamps; use `DateTime(timezone=True)` with `default=datetime.now(tz=UTC)` |
 | `Boolean` | `BOOLEAN` | Flags; set `default=False` |
 | `JSON` | `JSON` | Arbitrary JSON data |
 | `Enum(SomeEnum)` | PostgreSQL enum | Import from `enums.db_enums` |
@@ -69,8 +69,8 @@ def make_json(self):
 
 ### Timestamps
 
-- Use `created_at` and `updated_at` with `default=datetime.utcnow()` for models that need audit trails.
-- Use `deleted_at = Column(DateTime, nullable=True)` for soft-delete support.
+- Use `created_at` and `updated_at` with `default=datetime.now(tz=UTC)` for models that need audit trails.
+- Use `deleted_at = Column(DateTime(timezone=True), nullable=True)` for soft-delete support.
 
 ### Imports Order
 
@@ -79,7 +79,7 @@ from sqlalchemy import Column, Integer, String, Float, Enum, JSON, ForeignKey, D
 from db_models.base import Base
 from enums.db_enums import SomeEnum   # if applicable
 import uuid                            # if applicable
-from datetime import datetime          # if timestamps
+from datetime import datetime, UTC    # if timestamps
 ```
 
 ## Model Reference

@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, Float, Enum, JSON, ForeignKey, Boolean
-from db_models.base import Base
 import uuid
+
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+
+from db_models.base import Base
 
 
 class Invites(Base):
