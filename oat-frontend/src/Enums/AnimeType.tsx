@@ -13,3 +13,10 @@ export const ContentRating = [
   {'label': 'PG-13', 'value': 'PG-13'},
   {'label': 'R', 'value': 'R'}
 ]
+
+export const SeasonTypeEnum = [
+  {'label': 'Season', 'value': 'season'},
+  {'label': 'ONA', 'value': 'ona'},
+  {'label': 'OVA', 'value': 'ova'},
+  {'label': 'Special', 'value': 'special'}
+]

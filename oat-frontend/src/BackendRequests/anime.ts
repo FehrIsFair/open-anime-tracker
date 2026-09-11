@@ -16,3 +16,13 @@ export const animeGet = async () => {
   const res = await engine.get('/anime')
   return res.data
 }
+
+export const animeSearch = async (query: string) => {
+  const res = await engine.get('/anime/search', { params: { q: query } })
+  return res.data
+}
+
+export const animeGetByIdWithSeasons = async (id: number) => {
+  const res = await engine.get(`/anime/${id}`)
+  return res.data
+}

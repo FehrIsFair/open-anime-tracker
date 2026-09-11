@@ -26,6 +26,7 @@ const UserNav = () => {
         {path: '/', text: 'Home'},
         {path: '/add-anime', text: 'Add Anime'},
         {path: '/get-anime', text: 'Get Anime'},
+        {path: '/kitsu-import', text: 'Kitsu Import'},
     ]
 
     return (

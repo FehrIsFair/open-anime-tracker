@@ -1,12 +1,13 @@
 import React, { useContext } from "react";
 import { Box, Card, Typography } from "@mui/material";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 import { h1 } from "../TextFormating/text_config";
 import { AuthContext } from "../context/auth_context";
 import { animeGet } from "../BackendRequests/anime";
 
 interface AnimeItem {
+  id: number;
   title: string;
   desc: string;
   content_rating: string;
@@ -52,7 +53,9 @@ const GetAnime = () => {
       )}
       {animeList.map((item, idx) => (
         <Card key={idx} sx={{ p: 2, mb: 2 }}>
-          <Typography variant="h4">{item.title}</Typography>
+          <Link to={`/anime/${item.id}/details`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Typography variant="h4">{item.title}</Typography>
+          </Link>
           <Typography>{item.desc}</Typography>
           <Typography>Content Rating: {item.content_rating}</Typography>
           <Typography>JP Title: {item.jp_title}</Typography>

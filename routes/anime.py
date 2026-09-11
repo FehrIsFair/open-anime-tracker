@@ -1,8 +1,10 @@
 from flask import Blueprint, make_response, request
+from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
 
 from database import session
 from db_models.anime import Anime
+from db_models.seasons import Seasons
 from enums.db_enums import AnimeType, ReviewStatus
 from project_exceptions.exceptions import InvalidEnumException
 
@@ -42,6 +44,45 @@ def index():
   return_dict['data'] = [a.make_json() for a in req_anime]
 
   return make_response(return_dict, 200)
+
+
+@anime_routes.route('/anime/<int:anime_id>', methods=['GET'])
+def get_anime_by_id(anime_id):
+  try:
+    anime = session.query(Anime).filter(Anime.id == anime_id).first()
+    if not anime:
+      return make_response({'message': 'Anime not found'}, 404)
+    seasons = session.query(Seasons).filter(Seasons.anime_id == anime_id).all()
+    season_list = []
+    for s in seasons:
+      season_dict = {}
+      for key, value in s.__dict__.items():
+        if key == '_sa_instance_state':
+          continue
+        if key == 'type_season':
+          season_dict[key] = value.value if hasattr(value, 'value') else value
+        else:
+          season_dict[key] = value
+      season_list.append(season_dict)
+    return make_response({'anime': anime.make_json(), 'seasons': season_list}, 200)
+  except SQLAlchemyError as e:
+    print(e)
+    return make_response({'message': 'Failed to fetch anime details'}, 500)
+
+
+@anime_routes.route('/anime/search', methods=['GET'])
+def search_anime():
+  q = request.args.get('q', '')
+  if len(q) < 2:
+    return make_response({'message': 'Query must be at least 2 characters'}, 400)
+
+  try:
+    query = f'%{q.lower()}%'
+    results = session.query(Anime).filter(func.lower(Anime.title).like(query)).limit(10).all()
+    return make_response({'anime': [a.make_json() for a in results]}, 200)
+  except SQLAlchemyError as e:
+    print(e)
+    return make_response({'message': 'Failed to search anime'}, 500)
 
 
 @anime_routes.route('/anime/create', methods=['POST'])

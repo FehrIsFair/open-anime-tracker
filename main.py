@@ -8,6 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from config import ServerConfig, _redis_valid
 from routes.anime import anime_routes
+from routes.kitsu import kitsu_routes
 from routes.login import login_routes
 from routes.user import user_routes
 
@@ -37,6 +38,7 @@ def default():
 
 
 app.register_blueprint(anime_routes)
+app.register_blueprint(kitsu_routes)
 app.register_blueprint(user_routes)
 app.register_blueprint(login_routes)
 
