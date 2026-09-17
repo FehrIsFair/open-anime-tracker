@@ -13,9 +13,9 @@
 | Frontend Language | TypeScript | — |
 | UI Library | Material-UI | — |
 | HTTP Client | Axios | — |
-| Database | PostgreSQL | 15 (via Docker) |
+| Database | PostgreSQL | 15 (via Docker/Podman) |
 | Migrations | Alembic | — |
-| Dev Infra | Docker Compose | — |
+| Dev Infra | Docker Compose / Podman Compose | — |
 
 ## Coding Standards
 

@@ -65,7 +65,7 @@
 
 - [ ] 8. Implement and test the feature end-to-end
   - File: Verify all files from tasks 1-7 are correct
-  - Start Docker infrastructure (PostgreSQL + Redis).
+  - Start Docker/Podman infrastructure (PostgreSQL + Redis).
   - Run database migrations if needed (no new models, but verify schema).
   - Start Flask backend and verify both endpoints respond.
   - Start frontend and test the full flow: search → select anime → add seasons → configure parts → submit.

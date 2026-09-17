@@ -8,7 +8,7 @@ The `routes/` directory contains all Flask API endpoint definitions. Each route 
 
 - **Always use `Blueprint`** — `flask_classful.FlaskView` should be avoided. See `list.py` as a deprecated example.
 - **CORS is configured globally** in `main.py` via `CORS(app, resources={r"/*": {...}})` with `supports_credentials: True`. Do not use per-function `@cross_origin` decorators.
-- **Return consistent response format** — use `make_response(jsonify({...}), status_code)` for all JSON responses.
+- **Return consistent response format** — use `make_response({...}, status_code)` for all JSON responses. The dict is serialized to JSON by Flask automatically; you don't need `jsonify()`.
 - **Handle errors explicitly** — wrap DB operations in `try/except` and return `{'Message': '...', status_code}`.
 - **Use the shared `session`** from `database.py` — do not import `db.session` from SQLAlchemy directly.
 - **Set `sesh.modified = True`** after modifying the session object during auth flows to ensure Flask recognizes changes and persists the session cookie.
@@ -22,6 +22,8 @@ Handles CRUD for anime entries. Uses the `anime` blueprint prefix.
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `GET` | `/anime` | List all anime |
+| `GET` | `/anime/<int:anime_id>` | Fetch one anime + its seasons |
+| `GET` | `/anime/search?q=<query>` | Search anime by title (min 2 chars) |
 | `POST` | `/anime/create` | Create a new anime |
 | `PATCH` | `/anime/edit` | Edit an existing anime |
 | `DELETE` | `/anime/delete` | Soft-delete an anime |
@@ -36,6 +38,23 @@ Handles CRUD for anime entries. Uses the `anime` blueprint prefix.
 - `get_anime_type()` and `get_review_type()` validate enum inputs — throws `InvalidEnumException` on invalid values.
 - `edit_anime` uses a diff-based approach: only keys in `request_json['diffs']` are applied.
 - `create_anime` skips `title`, `_type`, and `status` from kwargs (handled explicitly) and passes the rest through.
+
+### [`routes/kitsu.py`](../routes/kitsu.py)
+
+Handles importing anime/seasons from the Kitsu API. Uses the `kitsu` blueprint prefix (endpoints are still under `/anime`).
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/anime/kitsu-import` | Import an anime from Kitsu by `kitsuId` |
+| `POST` | `/anime/kitsu-import-seasons` | Create seasons for an existing anime (body: `{animeId, seasons[]}`) |
+
+**Dependencies:**
+- [`common_funcs/kitsu.py`](../common_funcs/kitsu.py) — `fetch_and_store_kitsu_anime`, `import_seasons_to_anime` service functions
+- `KitsuAPIError` / `KitsuDataError` (defined in `common_funcs/kitsu.py`) — external API failures
+
+**Key patterns:**
+- Request body validation happens in the route before calling the service layer.
+- Service exceptions map to HTTP codes: `KitsuAPIError`/`KitsuDataError` → 404, `ValueError` → 400, `RuntimeError` → 500, unknown → 500.
 
 ### [`routes/user.py`](../routes/user.py)
 
@@ -106,22 +125,25 @@ All active blueprints are registered in [`main.py`](../main.py):
 
 ```python
 app.register_blueprint(anime_routes)
+app.register_blueprint(kitsu_routes)
 app.register_blueprint(user_routes)
 app.register_blueprint(login_routes)
 ```
+
+`routes/list.py` (FlaskView) is deprecated and **not registered**.
 
 ## Response Format Standards
 
 All routes should follow this response pattern:
 
 ```python
-from flask import make_response, jsonify
+from flask import make_response
 
 # Success
-make_response(jsonify({'data': [...]}), 200)
+make_response({'data': [...]}, 200)
 
 # Error
-make_response(jsonify({'Message': 'Description'}), status_code)
+make_response({'Message': 'Description'}, status_code)
 ```
 
 | Status Code | Use |

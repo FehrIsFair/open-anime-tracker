@@ -8,18 +8,17 @@
 ├── config.py               # Server configuration
 ├── const.py                # Runtime constants from .env
 ├── database.py             # DB engine and session setup
-├── auth.py                 # Authentication utilities
 ├── docker-compose.yml      # PostgreSQL + Redis + Adminer
 │
 ├── alembic/                # Database migration scripts
-│   ├── env.py
+│   ├── env.py              # Imports all models for autogenerate
 │   └── versions/
 ├── routes/                 # Flask route blueprints
-│   ├── anime.py            # Anime CRUD routes
+│   ├── anime.py            # Anime CRUD + search routes
 │   ├── kitsu.py            # Kitsu import routes
 │   ├── login.py            # Login routes
 │   ├── user.py             # User routes
-│   └── list.py             # List routes
+│   └── list.py             # List routes (deprecated, not registered)
 ├── db_models/              # SQLAlchemy ORM models
 │   ├── base.py             # Base class with make_json
 │   ├── anime.py            # Anime model
@@ -29,10 +28,12 @@
 │   ├── list.py             # List model
 │   └── invites.py          # Invite model
 ├── authentication/         # User auth logic
-├── common_funcs/           # Shared utilities
+├── common_funcs/           # Shared utilities (db_funcs, kitsu, login)
 ├── project_exceptions/     # Custom exceptions
 ├── enums/                  # Enum definitions
 │   └── db_enums.py
+├── data_pull.py            # One-off Kitsu data pull script
+├── data_store.py           # One-off Kitsu data store script
 │
 ├── oat-frontend/           # React + TypeScript frontend
 │   ├── src/
@@ -46,6 +47,7 @@
 │   └── package.json
 │
 ├── tests/                  # Test files (minimal)
+├── .agents/rules/          # Per-module agent conventions
 └── .spec-workflow/         # Spec workflow docs
 ```
 

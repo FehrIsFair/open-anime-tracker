@@ -105,4 +105,4 @@ from datetime import datetime, UTC    # if timestamps
 
 ## Link to Migrations
 
-Every model change requires a new Alembic migration. See `alembic/.agents/rules.md`.
+Every model change requires a new Alembic migration. See [`.agents/rules/alembic.md`](alembic.md).

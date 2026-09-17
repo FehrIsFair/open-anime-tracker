@@ -6,9 +6,10 @@ Open Anime Tracker is a full-stack web application for tracking anime ratings. I
 
 - **Backend**: Python 3.11 Flask API with SQLAlchemy, Flask-RESTful, Flask-Login, and Redis sessions
 - **Frontend**: React 18 + TypeScript (Material-UI) in `oat-frontend/`
-- **Database**: PostgreSQL 15 (via Docker)
-- **Caching/Sessions**: Redis (via Docker)
+- **Database**: PostgreSQL 15 (via Docker/Podman containers)
+- **Caching/Sessions**: Redis (via Docker/Podman containers)
 - **Migrations**: Alembic
+- **Package management**: `uv` (lockfile `uv.lock`) for backend, `npm` for frontend
 
 ---
 
@@ -17,8 +18,18 @@ Open Anime Tracker is a full-stack web application for tracking anime ratings. I
 | Tool | Version |
 |------|---------|
 | Python | 3.11.x |
+| uv | Latest |
 | Node.js | 20.x |
-| Docker | For PostgreSQL + Redis containers |
+| Docker or Podman | For PostgreSQL + Redis containers |
+
+### Backend Setup (uv)
+
+```sh
+uv sync        # install dependencies from uv.lock into .venv
+uv run flask --app main run --debug
+```
+
+Use `uv run` for other commands (e.g. `uv run alembic upgrade head`, `uv run pytest`).
 
 ---
 
@@ -48,7 +59,10 @@ python -c 'import secrets; print(secrets.token_hex())'
 ### 1. Start Infrastructure (PostgreSQL + Redis + Adminer)
 
 ```sh
+# Docker
 docker compose up -d
+# Podman (drop-in, same compose file)
+podman compose up -d
 ```
 
 This starts:
@@ -87,6 +101,8 @@ The frontend will open at `http://localhost:3000`.
 ```sh
 # Stop infrastructure
 docker compose down
+# ...or with Podman
+podman compose down
 
 # Stop backend: Ctrl+C in the terminal running flask
 
@@ -100,11 +116,10 @@ docker compose down
 ```
 .
 ├── main.py                 # Flask app entry point
-├── config.py               # Server configuration (SQLAlchemy, Redis, etc.)
+├── config.py               # Server configuration (SQLAlchemy, Redis, sessions)
 ├── const.py                # Runtime constants loaded from .env
 ├── database.py             # DB engine and session setup
 ├── alembic.ini             # Alembic migration config
-├── auth.py                 # Authentication utilities
 ├── docker-compose.yml      # PostgreSQL, Redis, Adminer containers
 │
 ├── alembic/                # Migration scripts
@@ -112,9 +127,11 @@ docker compose down
 │   └── versions/
 │
 ├── routes/                 # Flask route blueprints
-│   ├── anime.py
-│   ├── login.py
-│   └── user.py
+│   ├── anime.py            # Anime CRUD + search routes
+│   ├── kitsu.py            # Kitsu import routes
+│   ├── list.py             # List routes (deprecated, not registered)
+│   ├── login.py            # Auth routes
+│   └── user.py             # User routes
 │
 ├── db_models/              # SQLAlchemy models
 │   ├── base.py
@@ -130,10 +147,20 @@ docker compose down
 │
 ├── common_funcs/           # Shared utilities
 │   ├── db_funcs.py
+│   ├── kitsu.py            # Kitsu API helpers + season import service
 │   └── login.py
 │
 ├── project_exceptions/     # Custom exceptions
+│   ├── exceptions.py
+│   └── ...
 ├── enums/                  # Enum definitions
+│   └── db_enums.py
+│
+├── data_pull.py            # One-off Kitsu data pull script
+├── data_store.py           # One-off Kitsu data store script
+│
+├── .agents/                # Agent rules (per-module conventions)
+├── .spec-workflow/         # Spec-driven development workflow docs
 │
 ├── oat-frontend/           # React + TypeScript frontend
 │   ├── src/
@@ -162,8 +189,8 @@ alembic downgrade -1
 
 ## Development Notes
 
-- The backend loads all DB credentials from environment variables via `const.py`
+- The backend loads DB credentials and runtime constants from environment variables via `const.py`; `SECRET_KEY` is read directly from `os.environ` in `config.py`
 - Sessions are stored in Redis — make sure the Redis container is running
-- CORS is configured to allow all origins (adjust for production)
+- CORS allows `http://localhost:3000` with credentials (see `main.py`)
 - The frontend uses `react-scripts` (Create React App) — no separate build step required in dev mode
 - No backend tests currently exist in the `tests/` directory

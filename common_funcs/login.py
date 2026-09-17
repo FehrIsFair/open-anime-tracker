@@ -1,7 +1,5 @@
-import os
+import flask_bcrypt
 
 
 def valid_pw(pw: str, db_pw: str) -> bool:
-  from helper_funcs import bcrypt
-  hash = bcrypt.generate_password_hash(pw, os.environ.get('SALT')).decode('utf-8')
-  return hash == db_pw
+  return flask_bcrypt.check_password_hash(pw.encode('utf-8'), db_pw)

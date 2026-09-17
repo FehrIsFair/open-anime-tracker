@@ -4,6 +4,15 @@ from sqlalchemy import engine_from_config, pool
 
 from alembic import context
 from db_models.base import Base
+from db_models.anime import Anime  # noqa: F401
+from db_models.invites import Invites  # noqa: F401
+from db_models.list import List  # noqa: F401
+from db_models.ratings import Rating  # noqa: F401
+from db_models.seasons import Seasons  # noqa: F401
+from db_models.users import User  # noqa: F401
+
+# importing the model modules registers their tables on Base.metadata,
+# which Alembic needs for `alembic revision --autogenerate` to detect changes.
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

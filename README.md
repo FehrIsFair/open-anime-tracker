@@ -21,11 +21,12 @@ You will have to install 3.11 via a DeadSnakes ppa.
 If you don't want to do that, you can instead use pyenv.
 
 ## For Arch Linux Users:
-You will have to install the postgres sys-package. This project uses docker for the database, so you will have to run
+You will have to install the postgres sys-package. This project uses docker or podman for the database, so you will have to run
 the following command:
 ```sudo systemctl stop postgres.service```
 
 This is because it takes the default port and changing the ports in the docker-compose file does not fix the issue.
+Both runtimes read the same `docker-compose.yml`, so this applies regardless of whether you use Docker or Podman.
 
 ### How to set up the environment:
 

@@ -75,6 +75,8 @@ Steering docs define project-wide standards. Check if they exist under `.spec-wo
 
 These are created once and updated when the project's architecture changes.
 
+**HARD STOP — Show the user the created/verified steering documents and wait for approval before continuing.**
+
 ### Step 2: Requirements Document
 
 Create a new spec directory: `.spec-workflow/specs/{feature-name}/`
@@ -112,6 +114,8 @@ Create `requirements.md` using the template at `.spec-workflow/templates/require
 - Use WHEN/THEN acceptance criteria format
 - Include non-functional requirements (performance, security, reliability)
 - Number requirements sequentially for task traceability
+
+**HARD STOP — Show the user the `requirements.md` and wait for approval before continuing to design.**
 
 ### Step 3: Design Document
 
@@ -169,6 +173,8 @@ Create `design.md` in the same spec directory using the template.
 - Analyze what existing code will be leveraged
 - Define error handling for all failure modes
 
+**HARD STOP — Show the user the `design.md` and wait for approval before moving to tasks.**
+
 ### Step 4: Tasks Document
 
 Create `tasks.md` — this is the bridge between design and implementation. Each task must be a single, focused action that produces a file change.
@@ -197,6 +203,8 @@ Create `tasks.md` — this is the bridge between design and implementation. Each
 6. **Order by dependency** — earlier tasks must complete before later ones can start
 7. **Include sub-tasks** (3a, 3b, 3c) when related file changes naturally group together
 8. **Be specific about patterns** — reference exact existing patterns (blueprint setup, form patterns, API helper patterns)
+
+**HARD STOP — Show the user the `tasks.md` and wait for approval before starting implementation.**
 
 ### Step 5: Implementation
 
@@ -236,6 +244,8 @@ Now implement the tasks one by one. For each task:
 2. Check that all references in the spec point to real files
 3. Run the app to verify the feature works (start infra, backend, frontend if applicable)
 
+**HARD STOP — Show the user all completed implementation logs and ask if they want to proceed to approval.**
+
 ### Step 6: Approval
 
 When a spec is complete:
@@ -267,6 +277,7 @@ To customize a template, create a file with the same name in `user-templates/`.
 3. Requirements → Design → Tasks flow naturally — each document builds on the previous
 4. The tasks document is the most important — it's what you'll actually execute from
 5. Include agent prompts in tasks so they can be delegated
+6. **Respect hard stops** — after each planning step, show your work and wait for approval before proceeding
 
 ### For Continuing Work on an Existing Spec
 
@@ -292,6 +303,6 @@ This project uses:
 - **React + TypeScript + Material-UI** for frontend (`oat-frontend/src/`)
 - **Axios engine** for API calls (`oat-frontend/src/BackendRequests/`)
 - **Auth context** for authentication (`context/auth_context`)
-- **Docker Compose** for PostgreSQL + Redis infrastructure
+- **Docker/Podman Compose** for PostgreSQL + Redis infrastructure
 
 Always reference these patterns when writing design and tasks documents.
