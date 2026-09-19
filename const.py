@@ -6,7 +6,7 @@ load_dotenv()
 
 PG_USER = os.environ.get("POSTGRES_USER")
 PG_PW = os.environ.get("POSTGRES_PASSWORD")
-PG_PORT = os.environ.get("PG_PORT")
+PG_PORT = os.environ.get("PG_PORT") or '5432'
 SALT = int(os.environ.get("SALT"))
 REDIS_IP = os.environ.get("REDIS_IP") or '127.0.0.1'
 

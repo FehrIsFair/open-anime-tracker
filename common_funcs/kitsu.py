@@ -67,7 +67,7 @@ def _parse_anime_kwargs(data: dict) -> dict:
 
 def _parse_season_kwargs(data: dict) -> dict:
   """Parse Kitsu anime data into kwargs for the Seasons model (season 1)."""
-  return {
+  season_kwargs = {
     'episodes': data.get('episodeCount'),
     'desc': data.get('description') or data.get('synopsis'),
     'air_date': data.get('startDate'),
@@ -75,6 +75,16 @@ def _parse_season_kwargs(data: dict) -> dict:
     'type_season': SeasonType.SPECIAL,
     'title': data.get('titles', {}).get('en'),
   }
+
+  # Parse rating if available
+  avg_rating = data.get('averageRating')
+  if avg_rating:
+    try:
+      season_kwargs['rating'] = float(avg_rating)
+    except (ValueError, TypeError):
+      pass
+
+  return season_kwargs
 
 
 def import_seasons_to_anime(anime_id: int, seasons: list[dict]) -> dict:
