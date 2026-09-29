@@ -35,3 +35,8 @@ name = "open-anime-tracker"
 version = "0.1.0"
 description = ""
 readme = "README.md"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]

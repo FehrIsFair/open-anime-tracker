@@ -10,7 +10,18 @@ PG_PORT = os.environ.get("PG_PORT") or '5432'
 SALT = int(os.environ.get("SALT"))
 REDIS_IP = os.environ.get("REDIS_IP") or '127.0.0.1'
 
+###################
+# KITSU API STUFF #
+###################
 kitsu_api_base = 'https://kitsu.io/api/edge'
 kitsu_headers = {'Accept': 'application/vnd.api+json', 'Content-Type': 'application/vnd.api+json'}
 c_id = ''
 c_secret = ''
+
+#################
+# MAL API STUFF #
+#################
+
+mal_api_base = 'https://api.myanimelist.net/v2'
+mal_client_id = os.environ.get('MAL_CLIENT_ID')
+mal_client_secret = os.environ.get('MAL_CLIENT_SECRET')

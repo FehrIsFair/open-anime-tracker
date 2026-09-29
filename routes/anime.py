@@ -1,10 +1,17 @@
 from flask import Blueprint, make_response, request
+from flask import session as sesh
 from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
 
+from common_funcs.quarantine import (
+    check_and_update_quarantine_status,
+    is_season_in_quarantine,
+)
+from common_funcs.ratings import submit_user_rating
 from database import session
 from db_models.anime import Anime
 from db_models.seasons import Seasons
+from db_models.users import User
 from enums.db_enums import AnimeType, ReviewStatus
 from project_exceptions.exceptions import InvalidEnumException
 
@@ -53,6 +60,12 @@ def get_anime_by_id(anime_id):
     if not anime:
       return make_response({'message': 'Anime not found'}, 404)
     seasons = session.query(Seasons).filter(Seasons.anime_id == anime_id).all()
+
+    anime_status = (
+        anime.status.value if hasattr(anime.status, 'value') else anime.status
+    )
+    is_anime_quarantined = anime_status == ReviewStatus.quarantine.value
+
     season_list = []
     for s in seasons:
       season_dict = {}
@@ -63,8 +76,18 @@ def get_anime_by_id(anime_id):
           season_dict[key] = value.value if hasattr(value, 'value') else value
         else:
           season_dict[key] = value
+
+      # Suppress rating if anime or season is in quarantine
+      if is_anime_quarantined or is_season_in_quarantine(s):
+        season_dict['rating'] = None
+        season_dict['quarantined'] = True
+      else:
+        season_dict['quarantined'] = False
+
       season_list.append(season_dict)
-    return make_response({'anime': anime.make_json(), 'seasons': season_list}, 200)
+    return make_response(
+        {'anime': anime.make_json(), 'seasons': season_list}, 200
+    )
   except SQLAlchemyError as e:
     print(e)
     return make_response({'message': 'Failed to fetch anime details'}, 500)
@@ -74,21 +97,88 @@ def get_anime_by_id(anime_id):
 def search_anime():
   q = request.args.get('q', '')
   if len(q) < 2:
-    return make_response({'message': 'Query must be at least 2 characters'}, 400)
+    return make_response(
+        {'message': 'Query must be at least 2 characters'}, 400
+    )
 
   try:
     query = f'%{q.lower()}%'
-    results = session.query(Anime).filter(func.lower(Anime.title).like(query)).limit(10).all()
+    results = (
+        session.query(Anime)
+        .filter(func.lower(Anime.title).like(query))
+        .limit(10)
+        .all()
+    )
     return make_response({'anime': [a.make_json() for a in results]}, 200)
   except SQLAlchemyError as e:
     print(e)
     return make_response({'message': 'Failed to search anime'}, 500)
 
 
+@anime_routes.route('/anime/<int:anime_id>/rate', methods=['POST'])
+def rate_anime(anime_id):
+  body = request.get_json() or {}
+  rating_val = body.get('rating')
+  season_id = body.get('season_id')
+
+  if rating_val is None:
+    return make_response({'message': 'Missing rating in request body'}, 400)
+
+  username = sesh.get('username')
+  user_id = body.get('user_id')
+  if not user_id and username:
+    user = session.query(User).filter(User.username == username).first()
+    if user:
+      user_id = user.id
+
+  if not user_id:
+    return make_response({'message': 'Authentication required'}, 401)
+
+  try:
+    rating_record = submit_user_rating(
+        user_id=int(user_id),
+        anime_id=anime_id,
+        rating_value=int(rating_val),
+        season_id=int(season_id) if season_id is not None else None,
+    )
+    return make_response(
+        {
+            'message': 'Rating submitted successfully',
+            'rating': rating_record.make_json(),
+        },
+        200,
+    )
+  except ValueError as e:
+    return make_response({'message': str(e)}, 400)
+  except Exception as e:  # noqa: BLE001
+    print(e)
+    return make_response({'message': 'Failed to submit rating'}, 500)
+
+
+@anime_routes.route('/anime/quarantine-check', methods=['POST'])
+def run_quarantine_check():
+  """Endpoint for cron jobs to update quarantine statuses across all anime."""
+  body = request.get_json() or {}
+  anime_id = body.get('anime_id')
+  quarantine_days = body.get('quarantine_days', 21)
+
+  try:
+    result = check_and_update_quarantine_status(
+        anime_id=anime_id,
+        quarantine_days=quarantine_days,
+    )
+    return make_response(result, 200)
+  except Exception as e:  # noqa: BLE001
+    print(e)
+    return make_response({'message': 'Failed to run quarantine check'}, 500)
+
+
 @anime_routes.route('/anime/create', methods=['POST'])
 def create_anime():
   request_json = request.get_json()
-  anime = session.query(Anime).filter(Anime.title == request_json['title']).first()
+  anime = (
+      session.query(Anime).filter(Anime.title == request_json['title']).first()
+  )
 
   if anime:
     return make_response({'Message': 'Anime Already Exists'}, 409)
@@ -120,7 +210,11 @@ def create_anime():
 @anime_routes.route('/anime/edit', methods=['PATCH'])
 def edit_anime():
   request_json = request.get_json()
-  anime = session.query(Anime).filter(Anime.id == request_json['data']['_id']).first()
+  anime = (
+      session.query(Anime)
+      .filter(Anime.id == request_json['data']['_id'])
+      .first()
+  )
 
   if not anime:
     return make_response({'Message': 'Anime Does not exits'}, 404)
@@ -136,14 +230,20 @@ def edit_anime():
     session.commit()
   except SQLAlchemyError as e:
     print(e)
-    return make_response({'Message': 'Failed to commit changes to Anime'}, 500)
+    return make_response(
+        {'Message': 'Failed to commit changes to Anime'}, 500
+    )
   return make_response({'Message': 'Anime Updated'}, 200)
 
 
 @anime_routes.route('/anime/delete', methods=['DELETE'])
 def delete_anime():
   request_json = request.get_json()
-  anime = session.query(Anime).filter(Anime.id == request_json['data']['_id']).first()
+  anime = (
+      session.query(Anime)
+      .filter(Anime.id == request_json['data']['_id'])
+      .first()
+  )
 
   if not anime:
     return make_response({'Message': 'Anime Does not exits'}, 404)

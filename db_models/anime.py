@@ -25,11 +25,17 @@ class Anime(Base):
   content_rating = Column(String, default='PG')
   nsfw = Column(Boolean, default=False)
 
-  def __init__(self, title:str, _type: AnimeType, status: ReviewStatus = ReviewStatus.pending, **kwargs):
+  def __init__(
+      self,
+      title: str,
+      _type: AnimeType,
+      status: ReviewStatus = ReviewStatus.pending,
+      **kwargs,
+  ):
     super().__init__()
     self.title = title
     self._type = _type
-    self.status = status.value
+    self.status = status.value if hasattr(status, 'value') else status
     self.set_values(**kwargs)
 
   def set_values(self, **kwargs):
@@ -43,9 +49,17 @@ class Anime(Base):
         case '_sa_instance_state':
           continue
         case '_type':
-          return_dict[key] = value.value
+          return_dict[key] = value.value if hasattr(value, 'value') else value
         case 'status':
-          return_dict[key] = value.value
+          return_dict[key] = value.value if hasattr(value, 'value') else value
         case _:
           return_dict[key] = value
+
+    status_val = self.status.value if hasattr(self.status, 'value') else self.status
+    if status_val == ReviewStatus.quarantine.value:
+      return_dict['rating'] = None
+      return_dict['quarantined'] = True
+    else:
+      return_dict['quarantined'] = False
+
     return return_dict
