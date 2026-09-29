@@ -38,5 +38,6 @@ readme = "README.md"
 
 [dependency-groups]
 dev = [
+    "mcp>=2.2.0",
     "pytest>=9.1.1",
 ]

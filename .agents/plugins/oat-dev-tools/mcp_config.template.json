@@ -1,0 +1,57 @@
+{
+  "mcpServers": {
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "${DATABASE_URL}"
+      ]
+    },
+    "redis": {
+      "command": "${UVX_BIN}",
+      "args": [
+        "--from",
+        "redis-mcp-server@latest",
+        "redis-mcp-server",
+        "--url",
+        "${REDIS_URL}"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ]
+    },
+    "fetch": {
+      "command": "${UVX_BIN}",
+      "args": [
+        "--from",
+        "mcp-server-fetch",
+        "mcp-server-fetch"
+      ]
+    },
+    "git": {
+      "command": "${UVX_BIN}",
+      "args": [
+        "--from",
+        "mcp-server-git",
+        "mcp-server-git",
+        "--repository",
+        "${PROJECT_DIR}"
+      ]
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    }
+  }
+}

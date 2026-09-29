@@ -31,6 +31,16 @@ uv run flask --app main run --debug
 
 Use `uv run` for other commands (e.g. `uv run alembic upgrade head`, `uv run pytest`).
 
+### AI Agent / MCP Setup
+
+To configure all Model Context Protocol (MCP) servers for AI pair programming and debugging on any machine:
+
+```sh
+./setup-mcps.sh
+```
+
+Flags available: `--dry-run`, `--check`, `--project-only`, `--global-only`, `--skip-cache`, `--skip-browser`.
+
 ---
 
 ## Environment Variables

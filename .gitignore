@@ -15,3 +15,6 @@ data/
 #MCP an AI STUFF
 .playwright-mcp/*
 node_modules
+!/.agents/**/plugin.json
+!/.agents/**/mcp_config.template.json
+.agents/**/mcp_config.json
