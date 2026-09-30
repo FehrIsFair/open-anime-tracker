@@ -1,3 +1,5 @@
+import { UserRatingRecord } from './anime'
+
 export interface Season {
   id: number;
   season_number: number;
@@ -9,4 +11,5 @@ export interface Season {
   end_date: string | null;
   type_season: string;
   part: number | null;
+  user_rating?: UserRatingRecord | null;
 }

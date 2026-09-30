@@ -50,27 +50,37 @@ const SignUp = () => {
         label="Username"
         value={username}
         onChange={setUsername}
+        testId="qa-signup_username-input"
       />
       <EmailComponent
         id="email"
         label="Email"
         value={email}
         onChange={setEmail}
+        testId="qa-signup_email-input"
       />
       <PasswordComponent
         id="password"
         label="Password"
         value={password}
         onChange={setPassword}
+        testId="qa-signup_password-input"
       />
       <PasswordComponent
         id="confirm_password"
         label="Confirm Password"
         value={confirmPass}
         onChange={setConfirmPass}
+        testId="qa-signup_confirm_password-input"
       />
-      {error && <Typography color="error" sx={{ mt: 1, fontSize: "0.875rem" }}>{error}</Typography>}
-      <SubmitBtn variant="contained" onSubmit={submitForm} disabled={loading} sx={{ mt: 2 }}>
+      {error && <Typography color="error" sx={{ mt: 1, fontSize: "0.875rem" }} data-testid="qa-signup_error-error">{error}</Typography>}
+      <SubmitBtn
+        variant="contained"
+        onSubmit={submitForm}
+        disabled={loading}
+        sx={{ mt: 2 }}
+        testId="qa-signup_submit-submit"
+      >
         {loading ? "Creating account..." : "Submit"}
       </SubmitBtn>
     </Box>

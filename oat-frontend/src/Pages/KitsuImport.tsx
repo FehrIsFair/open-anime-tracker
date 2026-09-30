@@ -1,4 +1,4 @@
-import React, { useContext, useState, useCallback, useRef, type FormEvent } from "react";
+import React, { useContext, useState, useCallback, useRef } from "react";
 import {
   Box,
   Typography,
@@ -18,7 +18,7 @@ import SelectComponent from "../FormComps/SelectComp";
 import { SeasonTypeEnum } from "../Enums/AnimeType";
 import { animeSearch } from "../BackendRequests/anime";
 import { kitsuImport } from "../BackendRequests/kitsu";
-import { importSeasons, type Season } from "../BackendRequests/kitsu";
+import { importSeasons } from "../BackendRequests/kitsu";
 import { AuthContext } from "../context/auth_context";
 
 // ─── Single-Season Import Component ────────────────────────────────────────
@@ -69,14 +69,15 @@ const SingleSeasonImport = () => {
         label="Kitsu Anime ID"
         value={kitsuId}
         onChange={setKitsuId}
+        testId="qa-kitsu_single_id-input"
       />
       {error && (
-        <Typography color="error" sx={{ mt: 1, fontSize: "0.875rem" }}>
+        <Typography color="error" sx={{ mt: 1, fontSize: "0.875rem" }} data-testid="qa-kitsu_single_error-error">
           {error}
         </Typography>
       )}
       {success && (
-        <Typography color="success.main" sx={{ mt: 1, fontSize: "0.875rem" }}>
+        <Typography color="success.main" sx={{ mt: 1, fontSize: "0.875rem" }} data-testid="qa-kitsu_single_success-status">
           {success}
         </Typography>
       )}
@@ -85,6 +86,7 @@ const SingleSeasonImport = () => {
         onSubmit={handleSubmit}
         disabled={loading}
         sx={{ mt: 2 }}
+        testId="qa-kitsu_single_submit-submit"
       >
         {loading ? "Importing..." : "Import"}
       </SubmitBtn>
@@ -260,6 +262,7 @@ const MultiSeasonImport = () => {
             placeholder="Type to search anime..."
             value={searchQuery}
             onChange={(e) => handleSearchChange(e.target.value)}
+            data-testid="qa-kitsu_search-input"
             style={{
               padding: "10px 12px",
               fontSize: "1rem",
@@ -271,7 +274,7 @@ const MultiSeasonImport = () => {
             }}
           />
           {searchLoading && (
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" color="text.secondary" data-testid="qa-kitsu_search_loading-loading">
               Searching...
             </Typography>
           )}
@@ -281,6 +284,7 @@ const MultiSeasonImport = () => {
                 <Box
                   key={anime.id}
                   role="option"
+                  data-testid="qa-kitsu_search_result-click"
                   sx={{
                     px: 2,
                     py: 1,
@@ -298,14 +302,14 @@ const MultiSeasonImport = () => {
             </Paper>
           )}
           {selectedAnime && (
-            <Paper variant="outlined" sx={{ p: 1, backgroundColor: "success.light" }}>
+            <Paper variant="outlined" sx={{ p: 1, backgroundColor: "success.light" }} data-testid="qa-kitsu_selected_anime-data">
               <Typography variant="body2" color="success.dark">
                 ✓ Selected: {selectedAnime.title}
               </Typography>
             </Paper>
           )}
           {!searchLoading && searchQuery.length >= 2 && searchResults.length === 0 && !selectedAnime && (
-            <Typography variant="caption" color="error">
+            <Typography variant="caption" color="error" data-testid="qa-kitsu_search_empty-empty">
               No anime found.
             </Typography>
           )}
@@ -315,7 +319,7 @@ const MultiSeasonImport = () => {
 
         {/* Season Entries */}
         {seasons.map((season, index) => (
-          <Paper key={index} variant="outlined" sx={{ p: 2, mb: 2 }}>
+          <Paper key={index} variant="outlined" sx={{ p: 2, mb: 2 }} data-testid="qa-kitsu_season_card-card">
             <Stack spacing={2}>
               <Typography variant="h5" sx={{ mb: 0 }}>
                 Season {season.seasonNumber}
@@ -326,6 +330,7 @@ const MultiSeasonImport = () => {
                 label="Kitsu ID"
                 value={season.kitsuId}
                 onChange={(v) => updateSeason(index, "kitsuId", v)}
+                testId="qa-kitsu_season_id-input"
               />
 
               <SelectComponent
@@ -334,12 +339,14 @@ const MultiSeasonImport = () => {
                 value={season.typeSeason}
                 onChange={(v) => updateSeason(index, "typeSeason", v)}
                 options={SeasonTypeEnum}
+                testId="qa-kitsu_season_type-select"
               />
 
               <CheckBoxComponent
                 label="Has Parts"
                 value={season.hasParts}
                 onChange={(v) => updateSeason(index, "hasParts", v)}
+                testId="qa-kitsu_season_has_parts-toggle"
               />
 
               {season.hasParts && (
@@ -348,6 +355,7 @@ const MultiSeasonImport = () => {
                   label="Part Number"
                   value={season.part ?? 1}
                   onChange={(v) => updateSeason(index, "part", v)}
+                  testId="qa-kitsu_season_part-input"
                 />
               )}
 
@@ -355,6 +363,7 @@ const MultiSeasonImport = () => {
                 <Box sx={{ textAlign: "right" }}>
                   <button
                     type="button"
+                    data-testid="qa-kitsu_season_remove-click"
                     onClick={() => removeSeason(index)}
                     style={{
                       color: "error.main",
@@ -378,6 +387,7 @@ const MultiSeasonImport = () => {
         <Box sx={{ textAlign: "center", mb: 2 }}>
           <button
             type="button"
+            data-testid="qa-kitsu_add_season-click"
             onClick={addSeason}
             style={{
               padding: "8px 20px",
@@ -403,17 +413,18 @@ const MultiSeasonImport = () => {
           disabled={loading}
           fullWidth
           sx={{ mt: 2, py: 1.5 }}
+          testId="qa-kitsu_import_seasons_submit-submit"
         >
           {loading ? "Importing..." : "Import Seasons"}
         </SubmitBtn>
 
         {error && (
-          <Typography color="error" sx={{ mt: 1, fontSize: "0.875rem" }}>
+          <Typography color="error" sx={{ mt: 1, fontSize: "0.875rem" }} data-testid="qa-kitsu_multi_error-error">
             {error}
           </Typography>
         )}
         {success && (
-          <Typography color="success.main" sx={{ mt: 1, fontSize: "0.875rem" }}>
+          <Typography color="success.main" sx={{ mt: 1, fontSize: "0.875rem" }} data-testid="qa-kitsu_multi_success-status">
             {success}
           </Typography>
         )}
@@ -432,8 +443,8 @@ const KitsuImport = () => {
       {/* Tabs */}
       <Box sx={{ borderBottom: 1, borderColor: "divider", maxWidth: 700, mx: "auto" }}>
         <Tabs value={tab} onChange={(_, v) => setTab(v)}>
-          <Tab label="Single Season" />
-          <Tab label="Multi Season" />
+          <Tab label="Single Season" data-testid="qa-kitsu_single_tab-click" />
+          <Tab label="Multi Season" data-testid="qa-kitsu_multi_tab-click" />
         </Tabs>
       </Box>
 

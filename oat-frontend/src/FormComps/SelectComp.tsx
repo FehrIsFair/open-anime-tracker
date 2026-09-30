@@ -19,17 +19,20 @@ interface SelectProps {
   onChange: (value: string) => void;
   options: SelectOption[];
   error?: string;
+  testId?: string;
 }
 
 const SelectComponent = (props: SelectProps): JSX.Element => {
   const handleChange = (event: SelectChangeEvent) => {
     props.onChange(event.target.value);
   };
+  const testId = props.testId || `qa-${props.id.replace(/[^a-zA-Z0-9]+/g, '_').toLowerCase()}-select`;
 
   return (
     <>
       <InputLabel id={props.id}>{props.label}</InputLabel>
       <Select
+        data-testid={testId}
         labelId={props.id}
         id={props.id}
         label={props.label}
@@ -39,7 +42,11 @@ const SelectComponent = (props: SelectProps): JSX.Element => {
         fullWidth
       >
         {props.options.map((option) => (
-          <MenuItem key={option.value} value={option.value}>
+          <MenuItem
+            key={option.value}
+            value={option.value}
+            data-testid={`${testId}_option_${String(option.value).toLowerCase().replace(/[^a-zA-Z0-9]+/g, '_')}-select`}
+          >
             {option.label}
           </MenuItem>
         ))}

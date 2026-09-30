@@ -217,6 +217,25 @@ The frontend connects to the backend at a hardcoded URL: `http://localhost:5000`
 
 ---
 
+## QA & Automated Testing (`data-testid` Conventions)
+
+All interactive (actionable) and stateful/dynamic data elements must include `data-testid` attributes following the repository rule documented in [`.agents/rules/frontend_testids.md`](../.agents/rules/frontend_testids.md).
+
+### Format
+`qa-<element_name>-<action_or_data>`
+- **Prefix**: `qa-` (strictly required)
+- **`<element_name>`**: snake_case identifier (e.g. `signin_email`, `anime_card`, `kitsu_season_id`)
+- **`<action_or_data>`**:
+  - Actions: `click`, `submit`, `input`, `select`, `toggle`, `drag`
+  - Dynamic Data/States: `card`, `data`, `error`, `status`, `loading`, `empty`, `list`
+
+### Key Guidelines
+1. **No test IDs on static headings**: Avoid test IDs on static `<h1>`, `<h2>`, or passive layout wrappers.
+2. **Non-unique, repeatable test IDs for collections**: Items in lists, repeated cards, or dynamic form rows share uniform test IDs (e.g. `qa-anime_card-card`, `qa-kitsu_season_card-card`, `qa-kitsu_season_id-input`). Never use random or auto-increment database IDs.
+3. **FormComps support**: All reusable form inputs in `src/FormComps/` support an optional `testId` prop, auto-derive compliant fallbacks, and forward test IDs to `inputProps={{ 'data-testid': ... }}` for direct native input targeting in Playwright and MCP browser tools.
+
+---
+
 ## Known Issues & Notes
 
 1. **`debugger` statements** — There are `debugger` calls in `auth_context.tsx` (line 16) and `anime.ts` (line 20). These should be removed before production.

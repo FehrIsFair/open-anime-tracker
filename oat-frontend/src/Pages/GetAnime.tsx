@@ -46,21 +46,21 @@ const GetAnime = () => {
       <Typography variant="h1" sx={h1}>
         Your Anime
       </Typography>
-      {loading && <Typography>Loading...</Typography>}
-      {error && <Typography color="error">{error}</Typography>}
+      {loading && <Typography data-testid="qa-anime_list_loading-loading">Loading...</Typography>}
+      {error && <Typography color="error" data-testid="qa-anime_list_error-error">{error}</Typography>}
       {!loading && !error && animeList.length === 0 && (
-        <Typography>No anime entries yet.</Typography>
+        <Typography data-testid="qa-anime_list_empty-empty">No anime entries yet.</Typography>
       )}
       {animeList.map((item, idx) => (
-        <Card key={idx} sx={{ p: 2, mb: 2 }}>
-          <Link to={`/anime/${item.id}/details`} style={{ textDecoration: 'none', color: 'inherit' }}>
+        <Card key={idx} sx={{ p: 2, mb: 2 }} data-testid="qa-anime_card-card">
+          <Link to={`/anime/${item.id}/details`} style={{ textDecoration: 'none', color: 'inherit' }} data-testid="qa-anime_link-click">
             <Typography variant="h4">{item.title}</Typography>
           </Link>
-          <Typography>{item.desc}</Typography>
-          <Typography>Content Rating: {item.content_rating}</Typography>
-          <Typography>JP Title: {item.jp_title}</Typography>
-          <Typography>Type: {item._type}</Typography>
-          <Typography>Community Rating: {item.rating}</Typography>
+          <Typography data-testid="qa-anime_desc-data">{item.desc}</Typography>
+          <Typography data-testid="qa-anime_content_rating-data">Content Rating: {item.content_rating}</Typography>
+          <Typography data-testid="qa-anime_jp_title-data">JP Title: {item.jp_title}</Typography>
+          <Typography data-testid="qa-anime_type-data">Type: {item._type}</Typography>
+          <Typography data-testid="qa-anime_rating-data">Community Rating: {item.rating}</Typography>
         </Card>
       ))}
     </Box>

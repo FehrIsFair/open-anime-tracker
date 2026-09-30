@@ -72,24 +72,28 @@ const AddAnime = () => {
         label="Title"
         value={animeTitle}
         onChange={setAnimeTitle}
+        testId="qa-anime_title-input"
       />
       <InputComponent
         id="jp-title"
         label="JP Title"
         value={jpTitle}
         onChange={setJpTitle}
+        testId="qa-anime_jp_title-input"
       />
       <NumberInputComponent
         id="number-seasons"
         label="# of Seasons"
         value={seasons}
         onChange={setSeasons}
+        testId="qa-anime_seasons-input"
       />
       <NumberInputComponent
         id="number-episodes"
         label="# of Episodes"
         value={episodes}
         onChange={setEpisodes}
+        testId="qa-anime_episodes-input"
       />
       <TextAreaComponent
         id="description"
@@ -97,6 +101,7 @@ const AddAnime = () => {
         value={desc}
         onChange={setDesc}
         placeholder="A boy named Satou Satou is looking to become the best plastic surgeon..."
+        testId="qa-anime_desc-input"
       />
       <SelectComponent
         id="AnimeTypeSelect"
@@ -104,6 +109,7 @@ const AddAnime = () => {
         value={animeType}
         onChange={setAnimeType}
         options={AnimeTypeEnum}
+        testId="qa-anime_type-select"
       />
       <SelectComponent
         id="StatusSelect"
@@ -111,6 +117,7 @@ const AddAnime = () => {
         value={status}
         onChange={setStatus}
         options={StatusEnum}
+        testId="qa-anime_status-select"
       />
       <SelectComponent
         id="ContentSelect"
@@ -118,18 +125,21 @@ const AddAnime = () => {
         value={contentRating}
         onChange={setContentRating}
         options={ContentRating}
+        testId="qa-anime_content_rating-select"
       />
       <CheckBoxComponent
         value={nsfw}
         onChange={setNsfw}
         label="NSFW"
+        testId="qa-anime_nsfw-toggle"
       />
-      {error && <Typography color="error" sx={{ mt: 1, fontSize: "0.875rem" }}>{error}</Typography>}
+      {error && <Typography color="error" sx={{ mt: 1, fontSize: "0.875rem" }} data-testid="qa-add_anime_error-error">{error}</Typography>}
       <SubmitBtn
         variant="contained"
         onSubmit={submitForm}
         disabled={loading}
         sx={{ mt: 2 }}
+        testId="qa-add_anime_submit-submit"
       >
         {loading ? "Saving..." : "Submit"}
       </SubmitBtn>

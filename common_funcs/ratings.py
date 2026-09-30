@@ -5,6 +5,7 @@ from database import session
 from db_models.anime import Anime
 from db_models.ratings import Rating
 from db_models.seasons import Seasons
+from db_models.users import User
 from enums.db_enums import ReviewStatus
 
 
@@ -13,6 +14,7 @@ def submit_user_rating(
     anime_id: int,
     rating_value: int,
     season_id: int | None = None,
+    comment: str | None = None,
 ) -> Rating:
   """Submit or update a user rating for an anime show or specific season.
 
@@ -21,12 +23,23 @@ def submit_user_rating(
     anime_id: ID of the parent anime.
     rating_value: Score between 1 and 10.
     season_id: Optional ID of the specific season being rated.
+    comment: Optional brief commentary blurb (up to 500 characters).
 
   Returns:
     The created or updated Rating record.
   """
   if not isinstance(rating_value, int) or rating_value < 1 or rating_value > 10:
     raise ValueError('Rating must be an integer between 1 and 10')
+
+  clean_comment = None
+  if comment is not None:
+    if not isinstance(comment, str):
+      raise ValueError('Comment must be a string')
+    clean_comment = comment.strip()
+    if len(clean_comment) > 500:
+      raise ValueError('Comment cannot exceed 500 characters')
+    if not clean_comment:
+      clean_comment = None
 
   anime = session.query(Anime).filter(Anime.id == anime_id).first()
   if not anime:
@@ -58,6 +71,8 @@ def submit_user_rating(
 
   if existing:
     existing.rating = rating_value
+    if comment is not None:
+      existing.comment = clean_comment
     existing.updated_at = datetime.now(tz=UTC)
     rating_record = existing
   else:
@@ -66,6 +81,7 @@ def submit_user_rating(
         rating=rating_value,
         anime_id=anime_id,
         season_id=season_id,
+        comment=clean_comment,
     )
     session.add(rating_record)
 
@@ -92,6 +108,50 @@ def submit_user_rating(
     recalculate_anime_rating(anime_id)
 
   return rating_record
+
+
+def get_anime_reviews(
+    anime_id: int,
+    season_id: int | None = None,
+    limit: int = 20,
+) -> list[dict]:
+  """Fetch recent ratings with blurbs/comments for an anime or specific season."""
+  query = (
+      session.query(Rating, User.username, Seasons.title)
+      .join(User, Rating.user_id == User.id)
+      .outerjoin(Seasons, Rating.season_id == Seasons.id)
+      .filter(Rating.anime_id == anime_id)
+  )
+
+  if season_id is not None:
+    query = query.filter(Rating.season_id == season_id)
+
+  # Prioritize ratings that have non-null comments, then most recent
+  results = (
+      query.order_by(
+          Rating.comment.is_(None),
+          Rating.updated_at.desc(),
+      )
+      .limit(limit)
+      .all()
+  )
+
+  reviews = []
+  for r, username, season_title in results:
+    reviews.append({
+        'id': r.id,
+        'user_id': r.user_id,
+        'username': username,
+        'rating': r.rating,
+        'comment': r.comment,
+        'anime_id': r.anime_id,
+        'season_id': r.season_id,
+        'season_title': season_title,
+        'created_at': r.created_at.isoformat() if r.created_at else None,
+        'updated_at': r.updated_at.isoformat() if r.updated_at else None,
+    })
+  return reviews
+
 
 
 def calculate_aggregated_rating(anime_id: int) -> float | None:

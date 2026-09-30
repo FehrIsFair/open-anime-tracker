@@ -6,6 +6,7 @@ interface NumberInputProps {
   label: string;
   value: number;
   onChange: (value: number) => void;
+  testId?: string;
 }
 
 const NumberInputComponent = (props: NumberInputProps): JSX.Element => {
@@ -13,10 +14,13 @@ const NumberInputComponent = (props: NumberInputProps): JSX.Element => {
     const parsed = Number(event.target.value);
     props.onChange(isNaN(parsed) ? 0 : parsed);
   };
+  const testId = props.testId || `qa-${props.id.replace(/[^a-zA-Z0-9]+/g, '_').toLowerCase()}-input`;
 
   return (
     <FormControl fullWidth>
       <TextField
+        data-testid={testId}
+        inputProps={{ 'data-testid': testId }}
         id={props.id}
         label={props.label}
         variant="outlined"

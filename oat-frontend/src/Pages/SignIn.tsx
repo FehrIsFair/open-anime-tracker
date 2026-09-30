@@ -40,15 +40,23 @@ const SignIn = () => {
         label="Email"
         value={email}
         onChange={setEmail}
+        testId="qa-signin_email-input"
       />
       <PasswordComponent
         id="password"
         label="Password"
         value={password}
         onChange={setPassword}
+        testId="qa-signin_password-input"
       />
-      {error && <Typography color="error" sx={{ mt: 1, fontSize: "0.875rem" }}>{error}</Typography>}
-      <SubmitBtn variant="contained" onSubmit={submitForm} disabled={loading} sx={{ mt: 2 }}>
+      {error && <Typography color="error" sx={{ mt: 1, fontSize: "0.875rem" }} data-testid="qa-signin_error-error">{error}</Typography>}
+      <SubmitBtn
+        variant="contained"
+        onSubmit={submitForm}
+        disabled={loading}
+        sx={{ mt: 2 }}
+        testId="qa-signin_submit-submit"
+      >
         {loading ? "Signing in..." : "Submit"}
       </SubmitBtn>
     </Box>

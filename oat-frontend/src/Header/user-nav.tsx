@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 
 import NavItem, { NavProps } from './link-items';
 import { AuthContext } from '../context/auth_context';
@@ -18,7 +18,7 @@ const UserNav = () => {
             console.error('Logout failed:', err);
         } finally {
             logout();
-            navigate('/sign-in', { replace: true });
+            navigate('/signin', { replace: true });
         }
     }
 
@@ -34,7 +34,12 @@ const UserNav = () => {
             {routes.map((route) => (
                 <NavItem key={route.path} path={route.path} text={route.text} />
             ))}
-            <Button variant="outlined" color="error" onClick={handleLogout} data-testid="sign-out-btn">
+            {user?.username && (
+                <Typography sx={{ ml: 1, mr: 1, color: 'inherit' }} data-testid="qa-nav_user_name-data">
+                    {user.username}
+                </Typography>
+            )}
+            <Button variant="outlined" color="error" onClick={handleLogout} data-testid="qa-sign_out_btn-click">
                 Sign Out
             </Button>
         </Box>

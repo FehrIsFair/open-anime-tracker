@@ -26,3 +26,34 @@ export const animeGetByIdWithSeasons = async (id: number) => {
   const res = await engine.get(`/anime/${id}`)
   return res.data
 }
+
+export const animeRate = async (
+  animeId: number,
+  rating: number,
+  comment?: string,
+  seasonId?: number | null,
+  userId?: number
+) => {
+  const payload: any = { rating }
+  if (comment !== undefined) {
+    payload.comment = comment
+  }
+  if (seasonId !== undefined && seasonId !== null) {
+    payload.season_id = seasonId
+  }
+  if (userId !== undefined) {
+    payload.user_id = userId
+  }
+  const res = await engine.post(`/anime/${animeId}/rate`, payload)
+  return res.data
+}
+
+export const animeGetReviews = async (animeId: number, seasonId?: number | null) => {
+  const params: any = {}
+  if (seasonId !== undefined && seasonId !== null) {
+    params.season_id = seasonId
+  }
+  const res = await engine.get(`/anime/${animeId}/reviews`, { params })
+  return res.data
+}
+

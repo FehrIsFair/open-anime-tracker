@@ -170,6 +170,7 @@ podman compose down
 ├── data_store.py           # One-off Kitsu data store script
 │
 ├── .agents/                # Agent rules (per-module conventions)
+│   └── rules/              # alembic, db_models, enums, project_exceptions, routes, frontend_testids
 ├── .spec-workflow/         # Spec-driven development workflow docs
 │
 ├── oat-frontend/           # React + TypeScript frontend

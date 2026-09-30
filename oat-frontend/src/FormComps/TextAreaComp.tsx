@@ -8,12 +8,14 @@ interface TextAreaProps {
   onChange: (value: string) => void;
   placeholder?: string;
   error?: string;
+  testId?: string;
 }
 
 const TextAreaComponent = (props: TextAreaProps): JSX.Element => {
   const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     props.onChange(event.target.value);
   };
+  const testId = props.testId || `qa-${props.id.replace(/[^a-zA-Z0-9]+/g, '_').toLowerCase()}-input`;
 
   return (
     <>
@@ -21,6 +23,7 @@ const TextAreaComponent = (props: TextAreaProps): JSX.Element => {
         <Typography variant="subtitle2" sx={{ mt: 1 }}>{props.label}</Typography>
       )}
       <TextareaAutosize
+        data-testid={testId}
         id={props.id}
         placeholder={props.placeholder}
         value={props.value}
