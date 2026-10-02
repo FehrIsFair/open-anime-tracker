@@ -78,6 +78,7 @@ MCP Servers Configured:
   - fetch              Backend REST & external API fetching (@modelcontextprotocol/server-fetch)
   - git                Git history & working tree inspection (@modelcontextprotocol/server-git)
   - sequential-thinking Complex multi-step reasoning & architecture analysis
+  - local-llama        Local llama.cpp agent (~128k context, fail-fast)
 
 EOF
 }
@@ -211,6 +212,7 @@ if [[ -f "${ENV_FILE}" ]]; then
     PG_PW=$(grep -E '^[[:space:]]*POSTGRES_PASSWORD=' "${ENV_FILE}" | cut -d '=' -f2- | tr -d '"' | tr -d "'" | tr -d '\r' || true)
     PG_PORT=$(grep -E '^[[:space:]]*PG_PORT=' "${ENV_FILE}" | cut -d '=' -f2- | tr -d '"' | tr -d "'" | tr -d '\r' || true)
     REDIS_IP=$(grep -E '^[[:space:]]*REDIS_IP=' "${ENV_FILE}" | cut -d '=' -f2- | tr -d '"' | tr -d "'" | tr -d '\r' || true)
+    LLAMA_CPP_URL=$(grep -E '^[[:space:]]*LLAMA_CPP_URL=' "${ENV_FILE}" | cut -d '=' -f2- | tr -d '"' | tr -d "'" | tr -d '\r' || true)
 else
     log_warn ".env file not found in ${PROJECT_DIR}. Using default development settings."
 fi
@@ -222,12 +224,14 @@ PG_PORT="${PG_PORT:-5432}"
 PG_DB="db"
 REDIS_IP="${REDIS_IP:-127.0.0.1}"
 REDIS_PORT="6379"
+LLAMA_CPP_URL="${LLAMA_CPP_URL:-http://127.0.0.1:8080}"
 
 DATABASE_URL="postgresql://${PG_USER}:${PG_PW}@localhost:${PG_PORT}/${PG_DB}"
 REDIS_URL="redis://${REDIS_IP}:${REDIS_PORT}/0"
 
 log_info "PostgreSQL URL: postgresql://${PG_USER}:****@localhost:${PG_PORT}/${PG_DB}"
 log_info "Redis URL:      redis://${REDIS_IP}:${REDIS_PORT}/0"
+log_info "Local LLM URL:  ${LLAMA_CPP_URL} (~128k context)"
 
 # ------------------------------------------------------------------------------
 # 3. Connectivity Checks
@@ -266,6 +270,16 @@ else
     if [[ -n "${CONTAINER_CMD}" ]]; then
         log_info "Start infrastructure with: ${CONTAINER_CMD} up -d"
     fi
+fi
+
+# Optional local llama.cpp agent check
+LLAMA_HOST=$(python3 -c "from urllib.parse import urlparse; print(urlparse('${LLAMA_CPP_URL}').hostname or '127.0.0.1')")
+LLAMA_PORT=$(python3 -c "from urllib.parse import urlparse; p = urlparse('${LLAMA_CPP_URL}'); print(p.port or (443 if p.scheme == 'https' else 80))")
+
+if check_port "${LLAMA_HOST}" "${LLAMA_PORT}"; then
+    log_success "Local llama.cpp agent is reachable on ${LLAMA_HOST}:${LLAMA_PORT}."
+else
+    log_info "Local llama.cpp agent not detected on ${LLAMA_HOST}:${LLAMA_PORT} (optional; fail-fast enabled if invoked)."
 fi
 
 if ${CHECK_ONLY}; then
@@ -309,6 +323,12 @@ fi
 # 5. Build Configuration Payloads
 # ------------------------------------------------------------------------------
 log_header "5. Generating MCP Configurations"
+
+# Determine python executable for project-level MCP servers
+PYTHON_BIN="${PROJECT_DIR}/.venv/bin/python"
+if [[ ! -x "${PYTHON_BIN}" ]]; then
+    PYTHON_BIN="$(command -v python3)"
+fi
 
 # Generate servers JSON dictionary
 SERVERS_JSON=$(python3 -c "
@@ -367,6 +387,17 @@ servers = {
             '-y',
             '@modelcontextprotocol/server-sequential-thinking'
         ]
+    },
+    'local-llama': {
+        'command': '${PYTHON_BIN}',
+        'args': [
+            '${PROJECT_DIR}/scripts/llama_mcp_server.py'
+        ],
+        'env': {
+            'LLAMA_CPP_URL': '${LLAMA_CPP_URL}',
+            'LLAMA_CPP_CONTEXT_WINDOW': '131072',
+            'PYTHONUNBUFFERED': '1'
+        }
     }
 }
 print(json.dumps(servers))
@@ -446,7 +477,8 @@ printf "  ${BOLD}%-22s${NC} Session store and cache inspection\n" "redis"
 printf "  ${BOLD}%-22s${NC} React frontend UI testing and DOM inspection\n" "playwright"
 printf "  ${BOLD}%-22s${NC} Backend REST and external API requests\n" "fetch"
 printf "  ${BOLD}%-22s${NC} Git repository history and status\n" "git"
-printf "  ${BOLD}%-22s${NC} Architecture reasoning and multi-step workflows\n\n" "sequential-thinking"
+printf "  ${BOLD}%-22s${NC} Architecture reasoning and multi-step workflows\n" "sequential-thinking"
+printf "  ${BOLD}%-22s${NC} Local LLM agent queries (~128k ctx, fail-fast)\n\n" "local-llama"
 
 printf "${GREEN}✔ Setup complete!${NC}\n"
 printf "Restart or reload Antigravity to activate the new tools.\n"
