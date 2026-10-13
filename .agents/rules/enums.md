@@ -36,7 +36,20 @@ Used by: [`routes/anime.py`](routes/anime.py)
 
 Used by: [`db_models/seasons.py`](../db_models/seasons.py)
 
+### `ListStatus`
+
+| Value | Description |
+|-------|-------------|
+| `plan_to_watch` | Plan to watch |
+| `watching` | Currently watching |
+| `complete` | Completed watching |
+| `dropped` | Dropped |
+| `on_hold` | On hold |
+
+Used by: [`enums/db_enums.py`](../enums/db_enums.py), [`db_models/list.py`](../db_models/list.py), [`routes/list.py`](../routes/list.py)
+
 ## Conventions
+
 
 - **Use `enum.Enum`** — not `enum.IntEnum` or `enum.StrEnum`. All enum values are strings.
 - **Enum members match their string values** — e.g., `AnimeType.show = 'show'`. This keeps serialization trivial (no `.value` or `.name` indirection needed in most places).

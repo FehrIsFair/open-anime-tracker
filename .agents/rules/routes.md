@@ -104,20 +104,22 @@ Handles authentication (login, logout, session validation). Uses the `auth` blue
 
 ### [`routes/list.py`](../routes/list.py)
 
-⚠️ **Deprecated — not yet converted to Blueprint.** Currently uses `FlaskView` (class-based) and is **not registered** in `main.py`.
+Handles user anime list tracking and status management. Uses the `list` blueprint prefix.
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/list/<int:_id>` | Get a list by ID |
-| `POST` | `/list` | Add anime to a user's list |
-| `DELETE` | `/list` | Remove anime from a user's list |
+| `GET` | `/list` | Fetch authenticated user's list (optional `?status=`, `?sort=`) joined with anime and personal ratings |
+| `POST` | `/list` | Add or upsert anime in user's list (`{anime_id, status?}`) |
+| `PATCH` | `/list/<int:anime_id>` | Update watch status for an anime in user's list (`{status}`) |
+| `DELETE` | `/list/<int:anime_id>` | Remove anime from user's list |
+| `GET` | `/list/anime/<int:anime_id>` | Check list status for a specific anime |
 
-Current outdated patterns:
-- Uses `FlaskView` instead of `Blueprint`.
-- Imports `db.session` from SQLAlchemy directly instead of using the project's `session` from `database.py`.
-- Returns raw tuples `(status_code, body)` instead of `make_response(...)`.
-- Has a variable shadowing bug: `anime = anime = db.session.query(...)` on line 22.
-- The `index` method always returns `404`.
+**Dependencies:**
+- [`db_models/list.py`](../db_models/list.py) — `List` model
+- [`db_models/anime.py`](../db_models/anime.py) — `Anime` model
+- [`db_models/ratings.py`](../db_models/ratings.py) — `Rating` model
+- [`enums/db_enums.py`](../enums/db_enums.py) — `ListStatus`
+- [`project_exceptions/exceptions.py`](../project_exceptions/exceptions.py) — `InvalidEnumException`
 
 ## Registration
 
@@ -128,9 +130,9 @@ app.register_blueprint(anime_routes)
 app.register_blueprint(kitsu_routes)
 app.register_blueprint(user_routes)
 app.register_blueprint(login_routes)
+app.register_blueprint(list_routes)
 ```
 
-`routes/list.py` (FlaskView) is deprecated and **not registered**.
 
 ## Response Format Standards
 

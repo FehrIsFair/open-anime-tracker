@@ -6,6 +6,7 @@ import NavHeader from './Header/nav-header';
 import MainPage from './Main/main-page'
 import AddAnime from './Pages/AddAnime';
 import GetAnime from './Pages/GetAnime';
+import UserList from './Pages/UserList';
 import KitsuImport from './Pages/KitsuImport';
 import AnimeDetails from './Pages/AnimeDetails';
 import SignUp from './Pages/SignUp';
@@ -21,10 +22,12 @@ function App() {
           <NavHeader/>
           <Routes>
             <Route path='/' element={<AuthRoute><MainPage /></AuthRoute>} />
+            <Route path='/my-list' element={<AuthRoute><UserList /></AuthRoute>} />
             <Route path='/add-anime' element={<AuthRoute><AddAnime /></AuthRoute>} />
             <Route path='/get-anime' element={<AuthRoute><GetAnime /></AuthRoute>} />
             <Route path='/anime/:id/details' element={<AuthRoute><AnimeDetails /></AuthRoute>} />
             <Route path='/kitsu-import' element={<AuthRoute><KitsuImport /></AuthRoute>} />
+
             {/* Redirect authenticated users away from auth pages */}
             <Route path='/signup' element={
               <AuthRedirect>

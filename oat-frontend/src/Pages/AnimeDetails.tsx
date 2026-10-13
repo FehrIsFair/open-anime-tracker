@@ -1,11 +1,29 @@
 import React, { useContext, useState } from "react";
-import { Box, Card, Typography, Divider, Button, Collapse } from "@mui/material";
+import {
+  Box,
+  Card,
+  Typography,
+  Divider,
+  Button,
+  Collapse,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Chip,
+} from "@mui/material";
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { Navigate, useParams } from "react-router-dom";
 
 import { h1, h2 } from "../TextFormating/text_config";
 import { AuthContext } from "../context/auth_context";
 import { animeGetByIdWithSeasons } from "../BackendRequests/anime";
+import {
+  fetchAnimeListStatus,
+  addToList,
+  removeFromList,
+} from "../BackendRequests/list";
+import { ListStatus, STATUS_LABELS } from "../Models/list";
 import { Season } from "../Models/season";
 import { UserRatingRecord } from "../Models/anime";
 import MechanicalPinLocRating from "../Components/MechanicalRatingScroller/MechanicalPinLocRating";
@@ -29,8 +47,11 @@ const AnimeDetails = () => {
   const [error, setError] = React.useState("");
   const [reviewsTrigger, setReviewsTrigger] = useState<number>(0);
   const [expandedSeasonRatingId, setExpandedSeasonRatingId] = useState<number | null>(null);
+  const [listStatus, setListStatus] = useState<ListStatus | 'none'>('none');
+  const [listStatusUpdating, setListStatusUpdating] = useState<boolean>(false);
   const { user } = useContext(AuthContext);
   const { id } = useParams<{ id: string }>();
+
 
   React.useEffect(() => {
     const loadAnimeDetails = async () => {
@@ -53,8 +74,41 @@ const AnimeDetails = () => {
       }
     };
 
+    const loadListStatus = async () => {
+      if (!id) return;
+      try {
+        const res = await fetchAnimeListStatus(Number(id));
+        if (res.in_list && res.status) {
+          setListStatus(res.status);
+        } else {
+          setListStatus('none');
+        }
+      } catch (err) {
+        console.error('Failed to load list status:', err);
+      }
+    };
+
     loadAnimeDetails();
+    loadListStatus();
   }, [id]);
+
+  const handleListStatusChange = async (newVal: string) => {
+    if (!id) return;
+    setListStatusUpdating(true);
+    try {
+      if (newVal === 'none') {
+        await removeFromList(Number(id));
+        setListStatus('none');
+      } else {
+        await addToList(Number(id), newVal as ListStatus);
+        setListStatus(newVal as ListStatus);
+      }
+    } catch (err) {
+      console.error('Failed to update list status:', err);
+    } finally {
+      setListStatusUpdating(false);
+    }
+  };
 
   if (user == null) {
     return <Navigate to="/signin" />;
@@ -82,11 +136,44 @@ const AnimeDetails = () => {
       <Typography variant="h1" sx={h1}>
         {anime.title}
       </Typography>
+
+      {/* Watch Status Selector */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, my: 2 }}>
+        <FormControl size="small" sx={{ minWidth: 180 }}>
+          <InputLabel id="anime-details-list-status-label">Watch Status</InputLabel>
+          <Select
+            labelId="anime-details-list-status-label"
+            id="anime-details-list-status"
+            value={listStatus}
+            label="Watch Status"
+            onChange={(e) => handleListStatusChange(e.target.value)}
+            disabled={listStatusUpdating}
+            data-testid="qa-anime_details_list_status-select"
+          >
+            <MenuItem value="none"><em>Not in list</em></MenuItem>
+            <MenuItem value="watching">Watching</MenuItem>
+            <MenuItem value="plan_to_watch">Plan to Watch</MenuItem>
+            <MenuItem value="complete">Complete</MenuItem>
+            <MenuItem value="on_hold">On Hold</MenuItem>
+            <MenuItem value="dropped">Dropped</MenuItem>
+          </Select>
+        </FormControl>
+        {listStatus !== 'none' && (
+          <Chip
+            label={STATUS_LABELS[listStatus]}
+            color={listStatus === 'complete' ? 'success' : listStatus === 'watching' ? 'primary' : 'default'}
+            size="small"
+            data-testid="qa-anime_details_list_status-data"
+          />
+        )}
+      </Box>
+
       <Typography data-testid="qa-anime_community_rating-data">Community Rating: {anime.rating ?? "No rating"}</Typography>
       <Typography data-testid="qa-anime_type-data">Type: {anime._type}</Typography>
       <Typography data-testid="qa-anime_content_rating-data">Content Rating: {anime.content_rating}</Typography>
       {anime.jp_title && <Typography data-testid="qa-anime_jp_title-data">JP Title: {anime.jp_title}</Typography>}
       {anime.desc && <Typography sx={{ mt: 1 }} data-testid="qa-anime_desc-data">{anime.desc}</Typography>}
+
 
       {/* Show Level Mechanical Pin Loc Rating */}
       <Box sx={{ mt: 3, mb: 3 }}>

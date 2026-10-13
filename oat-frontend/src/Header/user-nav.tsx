@@ -24,10 +24,12 @@ const UserNav = () => {
 
     const routes: Array<NavProps> = [
         {path: '/', text: 'Home'},
+        {path: '/my-list', text: 'My List'},
         {path: '/add-anime', text: 'Add Anime'},
         {path: '/get-anime', text: 'Get Anime'},
         {path: '/kitsu-import', text: 'Kitsu Import'},
     ]
+
 
     return (
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
